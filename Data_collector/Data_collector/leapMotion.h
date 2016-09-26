@@ -74,7 +74,7 @@ LeapMotion::LeapMotion(std::string savePath)
 
 LeapMotion::~LeapMotion()
 {
-
+	if (myfile.is_open()) myfile.close();
 }
 
 void LeapMotion::updateFrame(void)

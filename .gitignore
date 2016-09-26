@@ -1,0 +1,12 @@
+*.tlog
+*.opensdf
+*.sdf
+*.idb
+*.txt
+*.bin
+*.bmp
+*.lastbuildstate
+*.exe
+*.pdb
+*.log
+*.caffemodel

@@ -1,8 +1,23 @@
 #include <iostream>
+#include <windows.h> 
+#include "openCV.h"
+#include "leapMotion.h"
 
-int main(void)
+int main(int argc, char** argv)
 {
-	printf("hello\n");
+	LeapMotion lm("..\\data");
+
+	while (1)
+	{
+		lm.updateFrame();
+
+		lm.saveImgs();
+
+		lm.saveHands();
+
+		Sleep(100);
+		cv::waitKey(1);
+	}
 
 	return 1;
 }

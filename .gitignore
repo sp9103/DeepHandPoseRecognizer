@@ -10,3 +10,7 @@
 *.pdb
 *.log
 *.caffemodel
+
+*.jpg
+*.dat
+*.txt

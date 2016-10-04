@@ -47,4 +47,24 @@ extern "C"{
 		cv::waitKey(1);
 	}
 
+	int EXPORT_API getPalmData(float pos[], float norm[], float dir[]){
+		int check = -1;
+
+		for (int i = 0; i < 2; i++){
+			if (!leap.handsdata[i].state)
+				continue;
+			
+			if (!leap.handsdata[i].isLeft){
+				check = 1;
+				for (int j = 0; j < 3; j++){
+					pos[j] = leap.handsdata[i].hand_palmPosition[j];
+					norm[j] = leap.handsdata[i].hand_palmNormal[j];
+					dir[j] = leap.handsdata[i].hand_direction[j];
+				}
+			}
+		}
+
+		return check;
+	}
+
 }

@@ -15,16 +15,16 @@ int main(int argc, char** argv)
 	cv::Mat BackGroundImg[2];
 
 
-	bool load = 0; // 0:live data, 1:loaded data
-	bool save = 1;
+	bool load = 1; // 0:live data, 1:loaded data
+	bool save = 0;
 	bool show = 1;
-	bool backgroundSubtraction = 1;
+	bool backgroundSubtraction = 0;
 
 	cv::Ptr<cv::BackgroundSubtractor>  bg1 = cv::createBackgroundSubtractorMOG2();
 	cv::Ptr<cv::BackgroundSubtractor>  bg2 = cv::createBackgroundSubtractorMOG2();
 	cv::Mat bg_img[2];
 
-	std::string loadDate = "930_1659";
+	std::string loadDate = "104_2319";
 
 	while (1)
 	{
@@ -32,7 +32,8 @@ int main(int argc, char** argv)
 		{
 			lm.loadImgs(loadDate, lm.data_counter);
 			lm.loadHands(loadDate, lm.data_counter);
-			lm.data_counter++;
+			if(lm.UpdatValid) lm.data_counter++;
+			lm.UpdatValid = true;
 			std::cout << "Load. data_idx :" << lm.data_counter << std::endl;
 		}
 		else
@@ -46,17 +47,24 @@ int main(int argc, char** argv)
 			lm.saveImgs();
 			lm.saveHands();
 			lm.saveHands_text();
+		}
 
-			if (backgroundSubtraction)
-				lm.saveForeGroundImgs();
+		if (backgroundSubtraction)
+		{
+			lm.ForeGroundImgs(save);
 		}
 
 		if (show)
 		{
 			cv::imshow("img1", img1);
 			cv::imshow("img2", img2);
-			cv::imshow("ForeGrouond1", lm.ForeGrouond[0]);
-			cv::imshow("ForeGrouond2", lm.ForeGrouond[1]);
+
+			if (backgroundSubtraction)
+			{
+				cv::imshow("ForeGrouond1", lm.ForeGrouond[0]);
+				cv::imshow("ForeGrouond2", lm.ForeGrouond[1]);
+			}
+
 			cv::waitKey(1);
 		}
 

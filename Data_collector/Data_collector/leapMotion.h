@@ -55,9 +55,6 @@ private:
 
 	time_t startTime;
 	
-	bool saveValid = false;
-	bool UpdatValid = false;
-
 	size_t ImgSize = sizeof(UCHAR) * HEIGHT * WIDTH;
 
 	bool isMkdir = 0;
@@ -84,7 +81,6 @@ private:
 	};
 	
 public:
-
 	ImgData imgdata;
 	HandData handsdata[2];
 
@@ -94,13 +90,15 @@ public:
 	LeapMotion::LeapMotion(std::string savePath);
 	LeapMotion::~LeapMotion();
 
+	bool saveValid = false;
+	bool UpdatValid = false;
 	cv::Mat ForeGrouond[2];
 
 	void updateFrame(void);
 
 	void getImgData(ImgData *output);
 	void saveImgs(void);
-	void saveForeGroundImgs(void);
+	void ForeGroundImgs(bool save);
 
 	void getHandsData(HandData *output);
 	void saveHands(void);
@@ -184,7 +182,7 @@ void LeapMotion::getImgData(ImgData *output)
 	if (counter != 2) UpdatValid = false;
 }
 
-void LeapMotion::saveForeGroundImgs(void)
+void LeapMotion::ForeGroundImgs(bool save = false)
 {
 	if (!controller.isConnected())
 	{
@@ -204,9 +202,11 @@ void LeapMotion::saveForeGroundImgs(void)
 			cv::Mat img(HEIGHT, WIDTH, CV_8UC1, imgdata.data[i]);
 			BackGrouond[i] = img.clone();
 
-			std::string file_path = dataDir + "background_" + std::to_string(i) + imgExtension;
-
-			cv::imwrite(file_path, BackGrouond[i]);
+			if (save)
+			{
+				std::string file_path = dataDir + "background_" + std::to_string(i) + imgExtension;
+				cv::imwrite(file_path, BackGrouond[i]);
+			}
 		}
 
 	for (int i = 0; i < 2; i++)
@@ -216,9 +216,11 @@ void LeapMotion::saveForeGroundImgs(void)
 		ForeGrouond[i] /= 255;
 		ForeGrouond[i] = img.mul(ForeGrouond[i]);
 
-		std::string file_path = dataDir + std::to_string(i) + "_f_" + std::to_string(data_counter) + imgExtension;
-
-		cv::imwrite(file_path, ForeGrouond[i]);
+		if (save)
+		{
+			std::string file_path = dataDir + std::to_string(i) + "_f_" + std::to_string(data_counter) + imgExtension;
+			cv::imwrite(file_path, ForeGrouond[i]);
+		}
 	}
 }
 

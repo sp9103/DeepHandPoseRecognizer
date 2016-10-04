@@ -2,12 +2,15 @@
 #include <string>
 #include <Windows.h>
 
+#include "leapMotion.h"
+
 #define EXPORT_API __declspec(dllexport)
 #define GEST_COUNT 10
 
 using namespace std;
 
 extern "C"{
+	LeapMotion leap;
 
 	void EXPORT_API TEST(){
 		MessageBox(NULL, L"Client DLL Test Successs", L"TEST", MB_OK);
@@ -26,6 +29,20 @@ extern "C"{
 			else
 				prob[i] = 0.0f;
 		}
+	}
+
+	void EXPORT_API LeapUpdataFrame(){
+		leap.updateFrame();
+	}
+
+	void EXPORT_API LeapShowImage(){
+		for (int i = 0; i < 2; i++){
+			cv::Mat Image(HEIGHT, WIDTH, CV_8UC1, leap.imgdata.data[i]);
+			char id[10];
+			itoa(i,  id, 10);
+			cv::imshow(id, Image);
+		}
+		cv::waitKey(1);
 	}
 
 }

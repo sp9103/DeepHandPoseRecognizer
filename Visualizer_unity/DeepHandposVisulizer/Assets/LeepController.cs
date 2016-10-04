@@ -11,6 +11,10 @@ public class LeepController : MonoBehaviour {
     [DllImport("LeepDll")]
     private static extern void Init();
     [DllImport("LeepDll")]
+    private static extern void LeapUpdataFrame();
+    [DllImport("LeepDll")]
+    private static extern void LeapShowImage();
+    [DllImport("LeepDll")]
     private static extern void CalcProbabilty(float[] prob);
 
     public GameObject HandModel;
@@ -25,11 +29,17 @@ public class LeepController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+        LeapUpdataFrame();
+        LeapShowImage();
+        visProb();
+	}
 
+    void visProb()
+    {
         CalcProbabilty(prob);
-        for(int i = 0; i < 10; i++)
+        for (int i = 0; i < 10; i++)
         {
             probSlider[i].value = prob[i];
         }
-	}
+    }
 }

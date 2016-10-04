@@ -6,8 +6,8 @@
 #pragma comment(lib, "x64\\opencv_ts300d.lib")
 #pragma comment(lib, "x64\\opencv_world300d.lib")
 #else
-#pragma comment(lib, "x64\\opencv_ts300.lib")
-#pragma comment(lib, "x64\\opencv_world300.lib")
+#pragma comment(lib, "opencv_ts300.lib")
+#pragma comment(lib, "opencv_world300.lib")
 #endif
 #else
 #ifdef _DEBUG

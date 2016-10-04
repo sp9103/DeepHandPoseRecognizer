@@ -1,8 +1,10 @@
 #include <stdio.h>
 #include <string>
 #include <Windows.h>
+#include <Leap.h>
 
 #include "leapMotion.h"
+//#include "openCV.h"
 
 #define EXPORT_API __declspec(dllexport)
 #define GEST_COUNT 10
@@ -17,7 +19,7 @@ extern "C"{
 	}
 
 	void EXPORT_API Init(){
-
+		leap.Init();
 	}
 
 	void EXPORT_API CalcProbabilty(float prob[]){

@@ -22,7 +22,8 @@ public class LeepController : MonoBehaviour {
 
     //GEST_COUNT
     float[] prob = new float[10];
-	// Use this for initialization
+	
+    // Use this for initialization
 	void Start () {
         Init();
 	}
@@ -32,7 +33,7 @@ public class LeepController : MonoBehaviour {
         LeapUpdataFrame();
         LeapShowImage();
         visProb();
-	}
+    }
 
     void visProb()
     {

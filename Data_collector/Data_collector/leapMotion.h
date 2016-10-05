@@ -54,10 +54,7 @@ private:
 	std::string mainDir, dataDir, date;
 
 	time_t startTime;
-
-	//하나라도 삐꾸나면 인덱스 증가 안함
-	bool isValid = false;
-
+	
 	size_t ImgSize = sizeof(UCHAR) * HEIGHT * WIDTH;
 
 	bool isMkdir = 0;
@@ -67,6 +64,8 @@ private:
 	std::ofstream myfile_text;
 
 	Leap::Frame frame;
+
+	cv::Mat BackGrouond[2];
 	
 	const std::string imgExtension = ".jpg";
 	const std::string textFileName = "handsData.txt";
@@ -82,7 +81,6 @@ private:
 	};
 	
 public:
-
 	ImgData imgdata;
 	HandData handsdata[2];
 
@@ -92,10 +90,15 @@ public:
 	LeapMotion::LeapMotion(std::string savePath);
 	LeapMotion::~LeapMotion();
 
+	bool saveValid = false;
+	bool UpdatValid = false;
+	cv::Mat ForeGrouond[2];
+
 	void updateFrame(void);
 
 	void getImgData(ImgData *output);
 	void saveImgs(void);
+	void ForeGroundImgs(bool save);
 
 	void getHandsData(HandData *output);
 	void saveHands(void);
@@ -151,10 +154,9 @@ void LeapMotion::updateFrame(void)
 {
 	frame = controller.frame();
 
-	if (isValid) data_counter++;
-
-	if (!controller.isConnected()) isValid = false;
-	else isValid = true;
+	if (saveValid && UpdatValid) data_counter++;
+	saveValid = true;
+	UpdatValid = true;
 
 	getImgData(&imgdata);
 	getHandsData(handsdata);
@@ -162,8 +164,9 @@ void LeapMotion::updateFrame(void)
 
 void LeapMotion::getImgData(ImgData *output)
 {
-	if (output == nullptr) return;
-	if (!controller.isConnected()) return;
+	if (output == nullptr) UpdatValid = false;
+	if (!controller.isConnected()) UpdatValid = false;
+	if (UpdatValid == false) return;
 
 	std::memset(output->data[0], 0, ImgSize);
 	std::memset(output->data[1], 0, ImgSize);
@@ -175,15 +178,59 @@ void LeapMotion::getImgData(ImgData *output)
 		const Leap::Image image = *il;
 		std::memcpy(output->data[counter++], image.data(), ImgSize);
 	}
+
+	if (counter != 2) UpdatValid = false;
+}
+
+void LeapMotion::ForeGroundImgs(bool save = false)
+{
+	if (!controller.isConnected())
+	{
+		saveValid = false;
+		return;
+	}
+
+	if (!isMkdir) makeDir();
+
+	bool updateBackGround = 0;
+	updateBackGround |= (BackGrouond[0].empty() && UpdatValid);
+	updateBackGround |= (controller.hasFocus() && GetAsyncKeyState(VK_SPACE));
+
+	if (updateBackGround)
+		for (int i = 0; i < 2; i++)
+		{
+			cv::Mat img(HEIGHT, WIDTH, CV_8UC1, imgdata.data[i]);
+			BackGrouond[i] = img.clone();
+
+			if (save)
+			{
+				std::string file_path = dataDir + "background_" + std::to_string(i) + imgExtension;
+				cv::imwrite(file_path, BackGrouond[i]);
+			}
+		}
+
+	for (int i = 0; i < 2; i++)
+	{
+		cv::Mat img(HEIGHT, WIDTH, CV_8UC1, imgdata.data[i]);
+		ForeGrouond[i] = abs(img - BackGrouond[i]) > 40;
+		ForeGrouond[i] /= 255;
+		ForeGrouond[i] = img.mul(ForeGrouond[i]);
+
+		if (save)
+		{
+			std::string file_path = dataDir + std::to_string(i) + "_f_" + std::to_string(data_counter) + imgExtension;
+			cv::imwrite(file_path, ForeGrouond[i]);
+		}
+	}
 }
 
 void LeapMotion::getHandsData(HandData *output)
 {
-	if (output == nullptr) return;
+	if (output == nullptr) UpdatValid = false;
+	if (!controller.isConnected()) UpdatValid = false;
+	if (UpdatValid == false) return;
 
 	std::memset(output, 0, sizeof(HandData) * 2);
-
-	if (!controller.isConnected()) return;
 
 	const Leap::HandList hands = frame.hands();
 	for (Leap::HandList::const_iterator hl = hands.begin(); hl != hands.end(); ++hl)
@@ -240,6 +287,12 @@ void LeapMotion::getHandsData(HandData *output)
 
 void LeapMotion::saveImgs(void)
 {
+	if (!controller.isConnected())
+	{
+		saveValid = false;
+		return;
+	}
+
 	if (!isMkdir) makeDir();
 
 	int isSaved = 0;
@@ -252,12 +305,16 @@ void LeapMotion::saveImgs(void)
 		if(cv::imwrite(file_path, Image)) isSaved++;
 	}
 
-	if (isValid) isValid = isSaved == 2;
+	if(isSaved != 2) saveValid = false;
 }
 
 void LeapMotion::saveHands(void)
 {
-	if (!controller.isConnected()) return;
+	if (!controller.isConnected())
+	{
+		saveValid = false;
+		return;
+	}
 
 	if (!isMkdir) makeDir();
 
@@ -355,6 +412,7 @@ void LeapMotion::loadImgs(std::string loadDate, size_t idx)
 	std::memset(imgdata.data[0], 0, ImgSize);
 	std::memset(imgdata.data[1], 0, ImgSize);
 
+	int counter = 0;
 	for (int i = 0; i < 2; i++)
 	{
 		std::string file_path = mainDir + "\\" + loadDate + "\\"
@@ -365,7 +423,10 @@ void LeapMotion::loadImgs(std::string loadDate, size_t idx)
 		if (temp.empty()) continue;
 			
 		std::memcpy(imgdata.data[i], temp.data, ImgSize);
+		counter++;
 	}
+
+	if (counter != 2) UpdatValid = false;
 }
 
 void LeapMotion::loadHands(std::string date, size_t idx)
@@ -375,7 +436,11 @@ void LeapMotion::loadHands(std::string date, size_t idx)
 
 	myfile_binary_read.open(binaryFile_path, std::ios::in | std::ios::binary);
 
-	if (!myfile_binary_read.is_open()) return;
+	if (!myfile_binary_read.is_open())
+	{
+		UpdatValid = false;
+		return;
+	}
 
 	myfile_binary_read.seekg(sizeof(HandData) * 2 * idx);
 	for (int i = 0; i < 2; i++)

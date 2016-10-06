@@ -10,7 +10,11 @@
 *.pdb
 *.log
 *.caffemodel
-
+*.csproj
+Visualizer_unity/DeepHandposVisulizer/Library/
+Visualizer_unity/DeepHandposVisulizer/Temp/
+Visualizer_unity/DeepHandposVisulizer/Obj/
+*.exp
 *.jpg
 *.dat
 *.txt

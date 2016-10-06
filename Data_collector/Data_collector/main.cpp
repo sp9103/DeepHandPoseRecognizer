@@ -15,10 +15,10 @@ int main(int argc, char** argv)
 	cv::Mat BackGroundImg[2];
 
 
-	bool load = 1; // 0:live data, 1:loaded data
-	bool save = 0;
+	bool load = 0; // 0:live data, 1:loaded data
+	bool save = 1;
 	bool show = 1;
-	bool backgroundSubtraction = 0;
+	bool backgroundSubtraction = 1;
 
 	cv::Ptr<cv::BackgroundSubtractor>  bg1 = cv::createBackgroundSubtractorMOG2();
 	cv::Ptr<cv::BackgroundSubtractor>  bg2 = cv::createBackgroundSubtractorMOG2();

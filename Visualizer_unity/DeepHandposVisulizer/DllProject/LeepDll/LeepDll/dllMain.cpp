@@ -37,11 +37,22 @@ extern "C"{
 		leap.updateFrame();
 	}
 
-	void EXPORT_API LeapShowImage(){
+	void EXPORT_API LeapShowImage(unsigned char left[], unsigned char right[], int width_height){
 		for (int i = 0; i < 2; i++){
 			cv::Mat Image(HEIGHT, WIDTH, CV_8UC1, leap.imgdata.data[i]);
+			cv::resize(Image, Image, cv::Size(width_height, width_height));
+
+			for (int j = 0; j < width_height * width_height; j++){
+				if (i == 0){
+					left[j] = Image.at<unsigned char>(j);
+				}
+				else{
+					right[j] = Image.at<unsigned char>(j);
+				}
+			}
+
 			char id[10];
-			itoa(i,  id, 10);
+			itoa(i, id, 10);
 			cv::imshow(id, Image);
 		}
 		cv::waitKey(1);

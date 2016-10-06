@@ -21,6 +21,7 @@ public class LeepController : MonoBehaviour {
 
     public GameObject HandModel;
     public Slider[] probSlider = new Slider[10];
+    public Image[] LeapImage = new Image[2];
 
     //GEST_COUNT
     private float[] prob = new float[10];
@@ -37,7 +38,7 @@ public class LeepController : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         LeapUpdataFrame();
-        LeapShowImage();
+        setCamFrame();
         setPalm();
         visProb();
     }
@@ -68,11 +69,15 @@ public class LeepController : MonoBehaviour {
                     Vector3 pos = new Vector3(palm_pos[0] * scale_factor, palm_pos[1] * scale_factor, palm_pos[2] * scale_factor);
                     Vector3 norm = new Vector3(palm_norm[0], palm_norm[1], palm_norm[2]);
                     Vector3 dir = new Vector3(palm_dir[0], palm_dir[1], palm_dir[2]);
-                    //t.gameObject.transform.position = pos;
+                    t.gameObject.transform.position = pos;
                     //t.gameObject.transform.rotation.
-                    Debug.Log(pos);
                 }
             }
         }
+    }
+
+    void setCamFrame()
+    {
+        LeapShowImage();
     }
 }

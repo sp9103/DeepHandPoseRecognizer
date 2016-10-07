@@ -49,8 +49,7 @@ public class LeepController : MonoBehaviour {
 	void Update () {
         LeapUpdataFrame();
         setCamFrame();
-        int hendcheck = setPalm();
-        setFingerPos();
+        setHand();
         visProb();
     }
 
@@ -68,7 +67,7 @@ public class LeepController : MonoBehaviour {
 
     }
 
-    int setPalm()
+    int setHand()
     {
         int check = getPalmData(palm_pos, palm_norm, palm_dir);
 
@@ -77,21 +76,9 @@ public class LeepController : MonoBehaviour {
         else
         {
             HandModel.SetActive(true);
-            Transform[] child = HandModel.transform.GetComponentsInChildren<Transform>(true);
-            foreach(Transform t in child)
-            {
-                if(t.gameObject.name == "R_Palm")
-                {
-                    Vector3 pos = new Vector3(palm_pos[0] * scale_factor, palm_pos[1] * scale_factor, -palm_pos[2] * scale_factor);
-                    Vector3 norm = new Vector3(palm_norm[0], palm_norm[1], -palm_norm[2]);
-                    Vector3 dir = new Vector3(palm_dir[0], palm_dir[1], -palm_dir[2]);
-                    t.gameObject.transform.position = pos;
-                    Debug.Log(norm);
-                    //y : up, x : right, z : forword -> 건드릴필요 x
-                    //t.gameObject.transform.up = -norm;
-                    t.gameObject.transform.right = dir;
-                }
-            }
+
+            //Hand model class로 넣어줌
+            //HandModel.GetComponent<HandController>().setJointPos();
         }
 
         return check;

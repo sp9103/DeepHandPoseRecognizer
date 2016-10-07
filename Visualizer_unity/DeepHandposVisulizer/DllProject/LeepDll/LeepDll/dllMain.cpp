@@ -78,4 +78,8 @@ extern "C"{
 		return check;
 	}
 
+	void EXPORT_API getFingerData(float data[]){
+
+	}
+
 }

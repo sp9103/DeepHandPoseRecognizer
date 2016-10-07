@@ -80,7 +80,7 @@ extern "C"{
 
 	void EXPORT_API getFingerData(float data[]){
 		for (int h = 0; h < 2; h++){
-			if (!leap.handsdata[h].state && !leap.handsdata[h].isLeft){
+			if (leap.handsdata[h].state && !leap.handsdata[h].isLeft){
 				for (int f = 0; f < 5; f++){				//finger idx
 					for (int b = 0; b < 4; b++){			//bon idx
 						for (int k = 0; k < 3; k++){

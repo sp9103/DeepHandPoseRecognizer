@@ -82,8 +82,6 @@ public class LeepController : MonoBehaviour {
 
             //Hand model class로 넣어줌
             getFingerData(fingerArray);
-            for(int i = 0; i < 60; i++)
-                Debug.Log(fingerArray[i]);
             HandModel.GetComponent<HandController>().setJointPos(fingerArray);
         }
 

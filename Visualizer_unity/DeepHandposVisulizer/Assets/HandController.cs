@@ -12,6 +12,8 @@ public class HandController : MonoBehaviour
     void Start()
     {
         //모델 생성부
+        //Thumb.renderer.
+        //Thumb.renderer.material.color = Color(0.777, 08, 0.604);
     }
 
     // Update is called once per frame
@@ -26,7 +28,7 @@ public class HandController : MonoBehaviour
         {
             for (int b = 0; b < 4; b++)
             {
-                boneArray[f, b] = new Vector3(pos[f * 4 * 3 + b * 3 + 0], pos[f * 4 * 3 + b * 3 + 1], -pos[f * 4 * 3 + b * 3 + 2])/* * scaleFactor*/;
+                boneArray[f, b] = new Vector3(pos[f * 4 * 3 + b * 3 + 0], pos[f * 4 * 3 + b * 3 + 1], -pos[f * 4 * 3 + b * 3 + 2]) * scaleFactor;
             }
         }
     }

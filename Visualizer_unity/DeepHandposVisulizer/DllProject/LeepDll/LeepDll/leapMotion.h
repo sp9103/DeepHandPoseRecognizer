@@ -95,10 +95,6 @@ void LeapMotion::Init(){
 	controller = new Leap::Controller();
 	controller->setPolicy(Leap::Controller::POLICY_IMAGES);
 	controller->setPolicy(Leap::Controller::POLICY_BACKGROUND_FRAMES);
-
-	if (!controller->isConnected()){
-		MessageBox(NULL, L"Leap is not connect", L"TEST", MB_OK);
-	}
 }
 
 

@@ -64,7 +64,7 @@ extern "C"{
 		for (int i = 0; i < 2; i++){
 			if (!leap.handsdata[i].state)
 				continue;
-			
+
 			if (!leap.handsdata[i].isLeft){
 				check = 1;
 				for (int j = 0; j < 3; j++){
@@ -79,7 +79,17 @@ extern "C"{
 	}
 
 	void EXPORT_API getFingerData(float data[]){
-
+		for (int h = 0; h < 2; h++){
+			if (!leap.handsdata[h].state && !leap.handsdata[h].isLeft){
+				for (int f = 0; f < 5; f++){				//finger idx
+					for (int b = 0; b < 4; b++){			//bon idx
+						for (int k = 0; k < 3; k++){
+							data[f * 4 * 3 + b * 3 + k] = leap.handsdata[h].finger[f].bone[b][1][k];
+						}
+					}
+				}
+			}
+		}
 	}
 
 }

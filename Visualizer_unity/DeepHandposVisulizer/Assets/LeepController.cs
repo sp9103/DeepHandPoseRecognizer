@@ -19,7 +19,7 @@ public class LeepController : MonoBehaviour {
     [DllImport("LeepDll")]
     private static extern int getPalmData(float[] pos, float[] norm, float[] dir);
     [DllImport("LeepDll")]
-    private static extern void getFingerData(float[] data);
+    private static extern void getFingerData(float[] next, float[] prev);
 
     public GameObject HandModel;
     public Slider[] probSlider = new Slider[10];
@@ -30,7 +30,8 @@ public class LeepController : MonoBehaviour {
     private float[] palm_pos = new float[3];
     private float[] palm_norm = new float[3];
     private float[] palm_dir = new float[3];
-    private float[] fingerArray = new float[5*4*3];
+    private float[] fingerArray = new float[5 * 4 * 3];
+    private float[] fingerPrev = new float[5 * 4 * 3];
     private byte[] left;
     private byte[] right;
     private Texture2D camTexture;
@@ -81,8 +82,9 @@ public class LeepController : MonoBehaviour {
             HandModel.SetActive(true);
 
             //Hand model class로 넣어줌
-            getFingerData(fingerArray);
+            getFingerData(fingerArray, fingerPrev);
             HandModel.GetComponent<HandController>().setJointPos(fingerArray);
+            HandModel.GetComponent<HandController>().setBone(fingerPrev, fingerArray);
         }
 
         return check;

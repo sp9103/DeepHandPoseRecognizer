@@ -8,6 +8,7 @@ public class HandController : MonoBehaviour
     private Vector3[,] boneArray = new Vector3[5, 4];
     private float scaleFactor = 0.01f;
     private GameObject[,] Bone = new GameObject[5, 4];
+    private Vector3 baseScale = new Vector3(0.7f, 0.7f, 0.7f);
 
     // Use this for initialization
     void Start()
@@ -19,6 +20,7 @@ public class HandController : MonoBehaviour
             {
                 Bone[i, j] = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
                 Bone[i, j].transform.parent = this.transform;
+                Bone[i, j].transform.localScale = baseScale;
             }
         }
     }
@@ -53,7 +55,10 @@ public class HandController : MonoBehaviour
 
                 Bone[f, b].transform.position = objPos;
                 Bone[f, b].transform.up = direction;
-                //Bone[f, b].transform.localScale
+
+                //길이 굵기 조정
+                float length = direction.magnitude * scaleFactor * 5.0f;
+                Bone[f, b].transform.localScale = new Vector3(baseScale.x, /*baseScale.y*/length, baseScale.z);
             }
         }
     }

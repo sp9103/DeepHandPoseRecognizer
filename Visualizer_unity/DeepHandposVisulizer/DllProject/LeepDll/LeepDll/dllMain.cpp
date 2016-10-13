@@ -37,11 +37,22 @@ extern "C"{
 		leap.updateFrame();
 	}
 
-	void EXPORT_API LeapShowImage(){
+	void EXPORT_API LeapShowImage(unsigned char left[], unsigned char right[], int width_height){
 		for (int i = 0; i < 2; i++){
 			cv::Mat Image(HEIGHT, WIDTH, CV_8UC1, leap.imgdata.data[i]);
+			cv::resize(Image, Image, cv::Size(width_height, width_height));
+
+			for (int j = 0; j < width_height * width_height; j++){
+				if (i == 0){
+					left[j] = Image.at<unsigned char>(j);
+				}
+				else{
+					right[j] = Image.at<unsigned char>(j);
+				}
+			}
+
 			char id[10];
-			itoa(i,  id, 10);
+			itoa(i, id, 10);
 			cv::imshow(id, Image);
 		}
 		cv::waitKey(1);
@@ -53,7 +64,7 @@ extern "C"{
 		for (int i = 0; i < 2; i++){
 			if (!leap.handsdata[i].state)
 				continue;
-			
+
 			if (!leap.handsdata[i].isLeft){
 				check = 1;
 				for (int j = 0; j < 3; j++){
@@ -65,6 +76,21 @@ extern "C"{
 		}
 
 		return check;
+	}
+
+	void EXPORT_API getFingerData(float next[], float prev[]){
+		for (int h = 0; h < 2; h++){
+			if (leap.handsdata[h].state && !leap.handsdata[h].isLeft){
+				for (int f = 0; f < 5; f++){				//finger idx
+					for (int b = 0; b < 4; b++){			//bon idx
+						for (int k = 0; k < 3; k++){
+							next[f * 4 * 3 + b * 3 + k] = leap.handsdata[h].finger[f].bone[b][1][k];
+							prev[f * 4 * 3 + b * 3 + k] = leap.handsdata[h].finger[f].bone[b][0][k];
+						}
+					}
+				}
+			}
+		}
 	}
 
 }

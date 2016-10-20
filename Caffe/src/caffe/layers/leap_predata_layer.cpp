@@ -220,85 +220,58 @@ bool LeapPredataLayer<Dtype>::fileTypeCheck(char *fileName){
 
 template <typename Dtype>
 void LeapPredataLayer<Dtype>::LoadFuc(int totalThread, int id){
-	////angle min max
-	//int angle_max[9] = { 251000, 251000, 251000, 251000, 151875, 151875, 4095, 4095, 4095 };
+	while (!stop_thread || finger_blob.size() < batch_size_){
+		FILE *fp;
+		int depthwidth, depthheight, depthType;
 
-	//while (!stop_thread || ang_blob.size() < batch_size_){
-	//	FILE *fp;
-	//	int depthwidth, depthheight, depthType;
+		idx_mtx.lock();
+		int myIdx = dataidx;
+		dataidx = (dataidx + 1) % FileList.size();
+		FilePath tempPath = FileList.at(myIdx);
+		idx_mtx.unlock();
 
-	//	idx_mtx.lock();
-	//	int myIdx = dataidx;
-	//	dataidx = (dataidx + 1) % FileList.size();
-	//	FilePath tempPath = FileList.at(myIdx);
-	//	idx_mtx.unlock();
+		//Left & Right load
+		std::string leftFilePath = tempPath.left_path;
+		std::string rightFilePath = tempPath.right_path;
+		cv::Mat leftImg = cv::imread(leftFilePath, CV_LOAD_IMAGE_GRAYSCALE);
+		cv::Mat rightImg = cv::imread(rightFilePath, CV_LOAD_IMAGE_GRAYSCALE);
+		cv::Mat templeftMat(height_, width_, CV_32FC1);
+		cv::Mat temprightMat(height_, width_, CV_32FC1);
+		for (int h = 0; h < leftImg.rows; h++){
+			for (int w = 0; w < leftImg.cols; w++){
+				templeftMat.at<float>(height_*width_ + width_*h + w) = (float)leftImg.at<uchar>(h, w) / 255.0f;
+				temprightMat.at<float>(height_*width_ + width_*h + w) = (float)rightImg.at<uchar>(h, w) / 255.0f;
+			}
+		}
 
-	//	//RGB load
-	//	std::string imageFilaPath = /*image_path.at(myIdx)*/tempPath.image_path;
-	//	cv::Mat img = cv::imread(imageFilaPath);
-	//	cv::Mat tempdataMat(height_, width_, CV_32FC3);
-	//	for (int h = 0; h < img.rows; h++){
-	//		for (int w = 0; w < img.cols; w++){
-	//			for (int c = 0; c < img.channels(); c++){
-	//				tempdataMat.at<float>(c*height_*width_ + width_*h + w) = (float)img.at<cv::Vec3b>(h, w)[c] / 255.0f;
-	//			}
-	//		}
-	//	}
+		//finger load
+		cv::Mat tempFingerMat(60, 1, CV_32FC1);
+		int idx = 0;
+		for (int i = 0; i < 5; i++){
+			for (int j = 0; j < 4; j++){
+				for (int k = 0; k < 3; k++){
+					tempFingerMat.at<float>(idx++) = tempPath.fingerJoint[i][j][k];
+				}
+			}
+		}
 
-	//	//Angle load
-	//	std::string angleFilaPath = /*ang_path.at(myIdx)*/tempPath.ang_path;
-	//	fp = fopen(angleFilaPath.c_str(), "r");
-	//	if (fp == NULL)
-	//		continue;
-	//	cv::Mat angMat(9, 1, CV_32FC1);
-	//	cv::Mat labelMat(9, 1, CV_32FC1);
-	//	int angBox[9];
-	//	bool angError = false;
-	//	for (int i = 0; i < 9; i++){
-	//		fscanf(fp, "%d", &angBox[i]);
-	//		angMat.at<float>(i) = (float)angBox[i] / angle_max[i] *  180.f;
-	//		labelMat.at<float>(i) = angMat.at<float>(i);
-	//		if (angBox[i] >= 250950 || angBox[i] <= -250950){
-	//			angError = true;
-	//			break;
-	//		}
-	//	}
-	//	if (angError){
-	//		FileList.erase(FileList.begin() + myIdx);
-	//		continue;
-	//	}
-	//	fclose(fp);
+		//store
+		save_mtx.lock();
+		left_blob.push_back(templeftMat);
+		right_blob.push_back(temprightMat);
+		finger_blob.push_back(tempFingerMat);
+		save_mtx.unlock();
 
-	//	//Depth load
-	//	std::string depthFilePath = /*depth_path.at(myIdx)*/tempPath.depth_path;
-	//	fp = fopen(depthFilePath.c_str(), "rb");
-	//	if (fp == NULL)
-	//		continue;
-	//	fread(&depthwidth, sizeof(int), 1, fp);
-	//	fread(&depthheight, sizeof(int), 1, fp);
-	//	fread(&depthType, sizeof(int), 1, fp);
-	//	cv::Mat depthMap(depthheight, depthwidth, depthType);
-	//	for (int i = 0; i < depthMap.rows * depthMap.cols; i++)        fread(&depthMap.at<float>(i), sizeof(float), 1, fp);
-	//	fclose(fp);
+		if (dataidx >= this->FileList.size()){
+			idx_mtx.lock();
+			dataidx = 0;
+			std::random_shuffle(FileList.begin(), FileList.end());
+			idx_mtx.unlock();
+		}
 
-	//	//store
-	//	save_mtx.lock();
-	//	image_blob.push_back(tempdataMat);
-	//	depth_blob.push_back(depthMap);
-	//	ang_blob.push_back(angMat);
-	//	labelMat.push_back(labelMat);
-	//	save_mtx.unlock();
-
-	//	if (dataidx >= this->FileList.size()){
-	//		idx_mtx.lock();
-	//		dataidx = 0;
-	//		std::random_shuffle(FileList.begin(), FileList.end());
-	//		idx_mtx.unlock();
-	//	}
-
-	//	if (image_blob.size() > 4000)
-	//		break;
-	//}
+		if (left_blob.size() > 4000)
+			break;
+	}
 }
 
 INSTANTIATE_CLASS(LeapPredataLayer);

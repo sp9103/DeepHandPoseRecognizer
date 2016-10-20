@@ -127,6 +127,7 @@
     <ClCompile Include="..\..\src\caffe\layers\eltwise_layer.cpp" />
     <ClCompile Include="..\..\src\caffe\layers\elu_layer.cpp" />
     <ClCompile Include="..\..\src\caffe\layers\embed_layer.cpp" />
+    <ClCompile Include="..\..\src\caffe\layers\euclidean_dist_layer.cpp" />
     <ClCompile Include="..\..\src\caffe\layers\euclidean_loss_layer.cpp" />
     <ClCompile Include="..\..\src\caffe\layers\exp_layer.cpp" />
     <ClCompile Include="..\..\src\caffe\layers\filter_layer.cpp" />
@@ -230,6 +231,7 @@
     <ClInclude Include="..\..\include\caffe\layers\eltwise_layer.hpp" />
     <ClInclude Include="..\..\include\caffe\layers\elu_layer.hpp" />
     <ClInclude Include="..\..\include\caffe\layers\embed_layer.hpp" />
+    <ClInclude Include="..\..\include\caffe\layers\euclidean_dist_layer.hpp" />
     <ClInclude Include="..\..\include\caffe\layers\euclidean_loss_layer.hpp" />
     <ClInclude Include="..\..\include\caffe\layers\exp_layer.hpp" />
     <ClInclude Include="..\..\include\caffe\layers\filter_layer.hpp" />

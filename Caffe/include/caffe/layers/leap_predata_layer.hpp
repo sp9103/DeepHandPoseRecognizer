@@ -52,6 +52,33 @@ namespace caffe {
 			int id;
 		}FilePath;
 
+		struct FingerData
+		{
+			int finger_type = NULL;
+			int finger_id = NULL;
+			float finger_length = NULL;
+			float finger_width = NULL;
+
+			float bone[4][3][3];// prevJoint, nextJoint, direction
+		};
+		struct HandData
+		{
+			long long int data_counter = NULL;
+			int state = 0;
+			bool isLeft = NULL;
+			int hand_id = NULL;
+
+			float hand_palmPosition[3];
+			float hand_palmNormal[3];
+			float hand_direction[3];
+
+			float arm_direction[3];
+			float arm_wristPosition[3];
+			float arm_elbowPosition[3];
+
+			FingerData finger[5];
+		};
+
 		virtual void Forward_cpu(const vector<Blob<Dtype>*>& bottom,
 			const vector<Blob<Dtype>*>& top);
 
@@ -65,8 +92,7 @@ namespace caffe {
 
 		std::string data_path_;
 
-		std::list<cv::Mat> left_blob;						//rgb image
-		std::list<cv::Mat> right_blob;						//distance
+		std::list<cv::Mat> streo_blob;						//rgb image
 		std::list<cv::Mat> finger_blob;			//pregrasping pos (image idx, pos)
 
 		std::vector<FilePath> FileList;

@@ -7,7 +7,7 @@ layer {
   include {
     phase: TRAIN
   }
-  sp_unsupervised_data_param {
+  data_load_param {
     batch_size: 300
     channels: 2
     height : 240
@@ -23,7 +23,7 @@ layer {
   include {
     phase: TEST
   }
-  sp_unsupervised_data_param {
+  data_load_param {
     batch_size: 300
     channels: 2
     height : 240

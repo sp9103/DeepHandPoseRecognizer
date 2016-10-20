@@ -388,6 +388,12 @@ int time() {
 RegisterBrewFunction(time);
 
 int main(int argc, char** argv) {
+	int targc = 4;
+	char *targv[5] = { "bin\\caffe.exe", "train", "--solver=resnet_pretrain/resnet_pretrain_18_solver.prototxt", "--gpu=all" };
+
+	char **argvp;
+	argvp = &targv[0];
+
   // Print output to stderr (while still logging).
   FLAGS_alsologtostderr = 1;
   // Set version
@@ -401,12 +407,12 @@ int main(int argc, char** argv) {
       "  device_query    show GPU diagnostic information\n"
       "  time            benchmark model execution time");
   // Run tool or show usage.
-  caffe::GlobalInit(&argc, &argv);
-  if (argc == 2) {
+  caffe::GlobalInit(&targc, &argvp);
+  if (targc == 2) {
 #ifdef WITH_PYTHON_LAYER
     try {
 #endif
-      return GetBrewFunction(caffe::string(argv[1]))();
+		return GetBrewFunction(caffe::string(argvp[1]))();
 #ifdef WITH_PYTHON_LAYER
     } catch (bp::error_already_set) {
       PyErr_Print();
@@ -414,6 +420,6 @@ int main(int argc, char** argv) {
     }
 #endif
   } else {
-    gflags::ShowUsageWithFlagsRestrict(argv[0], "tools/caffe");
+	  gflags::ShowUsageWithFlagsRestrict(argvp[0], "tools/caffe");
   }
 }

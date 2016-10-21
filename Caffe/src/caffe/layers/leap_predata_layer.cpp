@@ -141,7 +141,6 @@ void LeapPredataLayer<Dtype>::Leap_PredataLoadAll(const char* datapath){
 			sprintf(handFile, "%s\\%s\\handsData.dat", datapath, ccFileName);
 			FILE *fp = fopen(handFile, "rb");
 
-			int img_idx = 0;
 			while (!feof(fp)){
 				HandData tempHandData[2], targetData;
 				fread(tempHandData, sizeof(HandData), 2, fp);
@@ -153,10 +152,16 @@ void LeapPredataLayer<Dtype>::Leap_PredataLoadAll(const char* datapath){
 				if (targetData.state != 0){
 					FilePath tempPath;
 					char file_left[256], file_right[256];
+					int img_idx = targetData.data_counter;
 					sprintf(file_left, "%s\\%s\\Resize\\%d_%d.jpg", datapath, ccFileName, 0, img_idx);
 					sprintf(file_right, "%s\\%s\\Resize\\%d_%d.jpg", datapath, ccFileName, 1, img_idx);
 					tempPath.left_path = file_left;
 					tempPath.right_path = file_right;
+
+					//cv::Mat tempLeft = cv::imread(file_left);
+					//cv::Mat tempRight = cv::imread(file_right);
+					//if (tempLeft.rows == 0 || tempRight.rows == 0)
+					//	continue;
 
 					for (int i = 0; i < 5; i++)
 						for (int j = 0; j < 4; j++)
@@ -165,8 +170,6 @@ void LeapPredataLayer<Dtype>::Leap_PredataLoadAll(const char* datapath){
 
 					FileList.push_back(tempPath);
 				}
-
-				img_idx++;
 			}
 			fclose(fp);
 		}

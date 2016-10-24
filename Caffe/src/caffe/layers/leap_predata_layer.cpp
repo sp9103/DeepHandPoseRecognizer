@@ -158,15 +158,10 @@ void LeapPredataLayer<Dtype>::Leap_PredataLoadAll(const char* datapath){
 					tempPath.left_path = file_left;
 					tempPath.right_path = file_right;
 
-					//cv::Mat tempLeft = cv::imread(file_left);
-					//cv::Mat tempRight = cv::imread(file_right);
-					//if (tempLeft.rows == 0 || tempRight.rows == 0)
-					//	continue;
-
 					for (int i = 0; i < 5; i++)
 						for (int j = 0; j < 4; j++)
 							for (int k = 0; k < 3; k++)
-								tempPath.fingerJoint[i][j][k] = targetData.finger[i].bone[j][1][k];
+								tempPath.fingerJoint[i][j][k] = targetData.finger[i].bone[j][1][k] / 10.f;
 
 					FileList.push_back(tempPath);
 				}

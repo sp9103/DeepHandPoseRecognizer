@@ -8,7 +8,7 @@ layer {
     phase: TRAIN
   }
   data_load_param {
-    batch_size: 300
+    batch_size: 32
     channels: 2
     height : 240
     width : 240
@@ -24,7 +24,7 @@ layer {
     phase: TEST
   }
   data_load_param {
-    batch_size: 300
+    batch_size: 10
     channels: 2
     height : 240
     width : 240

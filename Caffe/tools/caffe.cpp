@@ -388,8 +388,10 @@ int time() {
 RegisterBrewFunction(time);
 
 int main(int argc, char** argv) {
+	//int targc = 4;
+	//char *targv[5] = { "bin\\caffe.exe", "train", "--solver=resnet_pretrain/resnet_pretrain_18_solver.prototxt", "--gpu=all" };
 	int targc = 4;
-	char *targv[5] = { "bin\\caffe.exe", "train", "--solver=resnet_pretrain/resnet_pretrain_18_solver.prototxt", "--gpu=all" };
+	char *targv[5] = { "bin\\caffe.exe", "train", "--solver=resnet_pretrain_single/resnet_pretrain_18_single_solver.prototxt", "--gpu=all" };
 
 	char **argvp;
 	argvp = &targv[0];

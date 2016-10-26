@@ -63,6 +63,7 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Leap_pretrain_data_loader.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -77,6 +78,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Leap_pretrain_data_loader.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <Import Project="$(SolutionDir)\CommonSettings.targets" />

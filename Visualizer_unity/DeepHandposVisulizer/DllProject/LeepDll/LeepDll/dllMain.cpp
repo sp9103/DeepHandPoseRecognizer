@@ -13,6 +13,7 @@ using namespace std;
 
 extern "C"{
 	LeapMotion leap;
+	FILE *fp = NULL;
 
 	void EXPORT_API TEST(){
 		MessageBox(NULL, L"Client DLL Test Successs", L"TEST", MB_OK);
@@ -93,4 +94,13 @@ extern "C"{
 		}
 	}
 
+	void EXPORT_API getBinData(char *fileName, float oriNext[], float oriPrev[], float netNext[], float netPrev[]){
+		if (fp == NULL)
+			fopen(fileName, "rb");
+		else if (feof(fp)){
+			fseek(fp, 0, SEEK_SET);
+		}
+
+		//Joint ∏¬√Á¡÷±‚
+	}
 }

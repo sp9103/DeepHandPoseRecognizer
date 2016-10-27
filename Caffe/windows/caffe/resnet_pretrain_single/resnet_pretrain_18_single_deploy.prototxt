@@ -2,7 +2,7 @@ name: "ResNet_pretrain-18_single"
 input: "Image"
 input_shape {
   dim: 1
-  dim: 2
+  dim: 1
   dim: 240
   dim: 240
 }

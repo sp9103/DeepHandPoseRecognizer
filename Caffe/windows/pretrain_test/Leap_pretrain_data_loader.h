@@ -40,7 +40,6 @@ public:
 	void LoadDataAll(char *path);
 	int getCount();
 
-private:
 	typedef struct path_{
 		std::string left_path;
 		std::string right_path;
@@ -48,9 +47,10 @@ private:
 		int id;
 	}FilePath;
 
+	void getData(cv::Mat *left, cv::Mat *right, FilePath *data, int idx);
+
+private:
 	std::vector<FilePath> dataList;
 
-public:
-	void getData(cv::Mat *left, cv::Mat *right, FilePath *data, int idx);
 };
 

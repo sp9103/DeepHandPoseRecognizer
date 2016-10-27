@@ -3,12 +3,12 @@
 #include "Leap_pretrain_data_loader.h"
 
 //STEREO
-//#define SOLVER "..\\caffe\\resnet_pretrain\\resnet_pretrain_18_deploy.prototxt"
-//#define TRAINRESULT "..\\caffe\\resnet_pretrain\\snapshot_pretrain\\resnet_pretrain_18_iter_200000.caffemodel"
+#define SOLVER "..\\caffe\\resnet_pretrain\\resnet_pretrain_18_deploy.prototxt"
+#define TRAINRESULT "..\\caffe\\resnet_pretrain\\snapshot_pretrain\\resnet_pretrain_18_iter_200000.caffemodel"
 
-////SINGLE
-#define SOLVER "..\\caffe\\resnet_pretrain_single\\resnet_pretrain_18_single_deploy.prototxt"
-#define TRAINRESULT "..\\caffe\\resnet_pretrain_single\\snapshot_pretrain\\resnet_pretrain_18_single_iter_200000.caffemodel"
+//////SINGLE
+//#define SOLVER "..\\caffe\\resnet_pretrain_single\\resnet_pretrain_18_single_deploy.prototxt"
+//#define TRAINRESULT "..\\caffe\\resnet_pretrain_single\\snapshot_pretrain\\resnet_pretrain_18_single_iter_200000.caffemodel"
 
 typedef struct resultData_{
 	float Thumb;
@@ -20,6 +20,13 @@ typedef struct resultData_{
 	cv::Mat left;
 	cv::Mat right;
 }resultData;
+
+typedef struct writeData_{
+	float startPos[5][3];
+	float netFinger[5][4][3];
+	float oriFinger[5][4][3];
+}writeData;
+
 
 bool ErrorMaxSort(resultData first, resultData second){
 	return first.Total > second.Total;
@@ -45,11 +52,12 @@ int main(int argc, char** argv) {
 	dataLoader.LoadDataAll("M:\\HandData\\TEST");
 
 	//Test & 통계 내기;
-	Blob<float> rgbBlob(1, 1, 240, 240);
+	Blob<float> rgbBlob(1, 2, 240, 240);
 
 	float totalDist = 0.0f;
 	float ThumbDist = 0.0f, IndexDist = 0.0f, MiddleDist = 0.0f, RingDist = 0.0f, PinkyDist = 0.0f;
 	std::vector<resultData> resultVec;
+	FILE *fp = fopen("resultData.bin", "wb");
 	for (int i = 0; i < dataLoader.getCount(); i++){
 		cv::Mat left, right;
 		Leap_pretrain_data_loader::FilePath FilePathData;
@@ -59,7 +67,7 @@ int main(int argc, char** argv) {
 		for (int h = 0; h < 240; h++){
 			for (int w = 0; w < 240; w++){
 				streoMat.at<float>(0 * 240 * 240 + 240 * h + w) = (float)left.at<uchar>(h, w) / 255.0f;
-				//streoMat.at<float>(1 * 240 * 240 + 240 * h + w) = (float)right.at<uchar>(h, w) / 255.0f;
+				streoMat.at<float>(1 * 240 * 240 + 240 * h + w) = (float)right.at<uchar>(h, w) / 255.0f;
 			}
 		}
 
@@ -103,7 +111,23 @@ int main(int argc, char** argv) {
 		tempResult.left = left.clone();
 		tempResult.right = right.clone();
 		resultVec.push_back(tempResult);
+
+		////StoreData
+		writeData tempWriteData;
+		for (int f = 0; f < 5; f++){
+			for (int j = 0; j < 4; j++){
+				for (int c = 0; c < 3; c++){
+					tempWriteData.netFinger[f][j][c] = outFinger[f][j][c] * 10.f;
+					tempWriteData.oriFinger[f][j][c] = FilePathData.fingerJoint[f][j][c] * 10.f;
+				}
+			}
+
+			for (int c = 0; c < 3; c++)
+				tempWriteData.startPos[f][c] = FilePathData.startJoint[f][c];
+		}
+		fwrite(&tempWriteData, sizeof(writeData), 1, fp);
 	}
+	fclose(fp);
 
 	//통계
 	printf("===========Average\n===================");

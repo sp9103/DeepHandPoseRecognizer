@@ -61,11 +61,14 @@ void Leap_pretrain_data_loader::LoadDataAll(char *datapath){
 					tempPath.left_path = file_left;
 					tempPath.right_path = file_right;
 
-					for (int i = 0; i < 5; i++)
+					for (int i = 0; i < 5; i++){
 						for (int j = 0; j < 4; j++)
 							for (int k = 0; k < 3; k++)
 								tempPath.fingerJoint[i][j][k] = targetData.finger[i].bone[j][1][k] / 10.f;
 
+						for (int c = 0; c < 3; c++)
+							tempPath.startJoint[i][c] = targetData.finger[i].bone[0][0][c];
+					}
 					dataList.push_back(tempPath);
 				}
 			}

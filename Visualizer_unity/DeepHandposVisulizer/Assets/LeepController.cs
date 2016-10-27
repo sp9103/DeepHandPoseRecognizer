@@ -47,6 +47,8 @@ public class LeepController : MonoBehaviour {
         right = new byte[width_height * width_height];
         camTexture = new Texture2D(width_height, width_height, TextureFormat.RGBA32, false);
         imagePixel = new Color[width_height * width_height];
+
+        HandModel.GetComponent<HandController>().setColor(Color.green);
     }
 	
 	// Update is called once per frame

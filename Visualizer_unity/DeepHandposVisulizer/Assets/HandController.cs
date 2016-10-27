@@ -95,4 +95,34 @@ public class HandController : MonoBehaviour
             }
         }
     }
+
+    public void setColor(Color src)
+    {
+
+        for (int i = 0; i < 5; i++)
+        {
+            for (int j = 0; j < 4; j++)
+            {
+                Bone[i, j].GetComponent<Renderer>().material.color = src;
+            }
+        }
+
+        setJointColor(Thumb, src);
+        setJointColor(Index, src);
+        setJointColor(Middle, src);
+        setJointColor(Ring, src);
+        setJointColor(Pinky, src);
+    }
+
+    void setJointColor(GameObject finger, Color src)
+    {
+        Transform[] child = finger.transform.GetComponentsInChildren<Transform>(true);
+        foreach (Transform t in child)
+        {
+            if (t.gameObject.name == "1" || t.gameObject.name == "2" || t.gameObject.name == "3" || t.gameObject.name == "4")
+            {
+                t.GetComponent<Renderer>().material.color = src;
+            }
+        }
+    }
 }

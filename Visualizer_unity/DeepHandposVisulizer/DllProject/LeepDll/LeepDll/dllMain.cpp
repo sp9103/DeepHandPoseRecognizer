@@ -100,11 +100,19 @@ extern "C"{
 		}
 	}
 
-	void EXPORT_API getBinData(char *fileName, float oriNext[], float oriPrev[], float netNext[], float netPrev[]){
+	void EXPORT_API getBinData(char *fileName, float oriNext[], float oriPrev[], float netNext[], float netPrev[], int waitterm){
 		if (fp == NULL)
-			fopen(fileName, "rb");
-		else if (feof(fp)){
+			fp = fopen(fileName, "rb");
+		else if (fp != NULL && feof(fp))
 			fseek(fp, 0, SEEK_SET);
+
+		if (fp == NULL){
+			wchar_t pwstrDest[256];
+			int nLen = (int)strlen(fileName) + 1;
+			mbstowcs(pwstrDest, fileName, nLen);
+			MessageBox(NULL, pwstrDest, L"ERROR", MB_OK);
+
+			return;
 		}
 
 		//Joint ¸ÂÃçÁÖ±â
@@ -130,5 +138,8 @@ extern "C"{
 				}
 			}
 		}
+
+		if (waitterm > 0)
+			Sleep(waitterm);
 	}
 }

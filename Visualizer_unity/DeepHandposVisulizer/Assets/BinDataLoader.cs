@@ -1,15 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections;
-using System.Collections;
 using System.Runtime.InteropServices;
 using System;
 
 public class BinDataLoader : MonoBehaviour {
     [DllImport("LeepDll")]
-    private static extern void getBinData(char[] filePath, float[] orinext, float[] oriprev, float[] netnext, float[] netprev);
+    private static extern void getBinData(byte[] filePath, float[] orinext, float[] oriprev, float[] netnext, float[] netprev, int waitterm);
 
     public GameObject Origin, Calc;
     public string FilePath;
+    public int waitTerm;
 
     private float[] oriArray = new float[5 * 4 * 3];
     private float[] oriPrev = new float[5 * 4 * 3];
@@ -25,7 +25,10 @@ public class BinDataLoader : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         //Read
-        getBinData(FilePath.ToCharArray(), oriArray, oriPrev, netArray, netPrev);
+        byte[] file_char = System.Text.Encoding.UTF8.GetBytes(FilePath);
+
+        Debug.Log(waitTerm);
+        getBinData(file_char, oriArray, oriPrev, netArray, netPrev, waitTerm);
 
         //Move
         Calc.GetComponent<HandController>().setJointPos(netArray);

@@ -123,7 +123,7 @@ int main(int argc, char** argv) {
 			}
 
 			for (int c = 0; c < 3; c++)
-				tempWriteData.startPos[f][c] = FilePathData.startJoint[f][c];
+				tempWriteData.startPos[f][c] = FilePathData.startJoint[f][c] * 10.f;
 		}
 		fwrite(&tempWriteData, sizeof(writeData), 1, fp);
 	}

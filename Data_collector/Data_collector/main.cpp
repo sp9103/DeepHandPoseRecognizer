@@ -24,7 +24,7 @@ int main(int argc, char** argv)
 	cv::Ptr<cv::BackgroundSubtractor>  bg2 = cv::createBackgroundSubtractorMOG2();
 	cv::Mat bg_img[2];
 
-	std::string loadDate = "104_2319";
+	std::string loadDate = "108_1614";
 
 	while (1)
 	{

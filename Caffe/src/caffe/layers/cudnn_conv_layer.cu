@@ -1,5 +1,6 @@
 #ifdef USE_CUDNN
 #include <vector>
+#include <opencv2\opencv.hpp>
 
 #include "caffe/layers/cudnn_conv_layer.hpp"
 
@@ -51,6 +52,32 @@ void CuDNNConvolutionLayer<Dtype>::Forward_gpu(
     // NOLINT_NEXT_LINE(whitespace/operators)
     sync_conv_groups<<<1, 1>>>();
   }
+
+
+  /////////////////////////temp vis//////////////////////////
+  //for (int i = 0; i < 64 * 2; i++){
+	 // Dtype weightFilter[49];
+	 // cudaMemcpy(weightFilter, &this->blobs_[0]->gpu_data()[49 * i], sizeof(Dtype) * 49, cudaMemcpyDeviceToHost);
+	 // cv::Mat filter(7, 7, CV_32FC1);
+	 // float min = FLT_MAX, max = -FLT_MIN;
+	 // for (int j = 0; j < 49; j++){
+		//  if (min > weightFilter[j])	min = weightFilter[j];
+		//  if (max < weightFilter[j])	max = weightFilter[j];
+	 // }
+
+	 // for (int h = 0; h < 7; h++){
+		//  for (int w = 0; w < 7; w++){
+		//	  filter.at<float>(h, w) = (weightFilter[h * 7 + w] - min) / (max - min) * 255.f;
+		//  }
+	 // }
+
+	 // char name[32];
+	 // itoa(i, name, 10);
+	 // strcat(name, ".jpg");
+	 // cv::imwrite(name, filter);
+  //}
+  //printf("complete\n");
+  //////////////////////////////////////////////////////////
 }
 
 template <typename Dtype>

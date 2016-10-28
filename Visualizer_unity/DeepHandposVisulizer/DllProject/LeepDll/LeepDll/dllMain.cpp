@@ -118,6 +118,8 @@ extern "C"{
 		//Joint ∏¬√Á¡÷±‚
 		writeData binData;
 		fread(&binData, sizeof(writeData), 1, fp);
+		FILE *temp = fopen("test.txt", "w");
+		FILE *temp2 = fopen("test2.txt", "w");
 		for (int f = 0; f < 5; f++){
 			for (int j = 0; j < 4; j++){
 				for (int c = 0; c < 3; c++){
@@ -131,9 +133,18 @@ extern "C"{
 						oriPrev[f * 4 * 3 + j * 3 + c] = binData.startPos[f][c];
 						netPrev[f * 4 * 3 + j * 3 + c] = binData.startPos[f][c];
 					}
+
+					fprintf(temp, "%.4f ", oriNext[f * 4 * 3 + j * 3 + c]);
+					fprintf(temp2, "%.4f ", oriPrev[f * 4 * 3 + j * 3 + c]);
 				}
+				fprintf(temp, "\n");
+				fprintf(temp2, "\n");
 			}
+			fprintf(temp, "\n");
+			fprintf(temp2, "\n");
 		}
+		fclose(temp);
+		fclose(temp2);
 
 		if (waitterm > 0)
 			Sleep(waitterm);

@@ -31,9 +31,9 @@ public class BinDataLoader : MonoBehaviour {
         getBinData(file_char, oriArray, oriPrev, netArray, netPrev, waitTerm);
 
         //Move
-        //Calc.GetComponent<HandController>().setJointPos(netArray);
+        Calc.GetComponent<HandController>().setJointPos(netArray);
         Calc.GetComponent<HandController>().setBone(netPrev, netArray);
-        //Origin.GetComponent<HandController>().setJointPos(oriArray);
+        Origin.GetComponent<HandController>().setJointPos(oriArray);
         Origin.GetComponent<HandController>().setBone(oriPrev, oriArray);
     }
 }

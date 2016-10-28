@@ -44,6 +44,12 @@ public class HandController : MonoBehaviour
 
     public void setBone(float[] prev, float[] next)
     {
+        fingerMove(Thumb, boneArray, 0);
+        fingerMove(Index, boneArray, 1);
+        fingerMove(Middle, boneArray, 2);
+        fingerMove(Ring, boneArray, 3);
+        fingerMove(Pinky, boneArray, 4);
+
         for (int f = 0; f < 5; f++)
         {
             for (int b = 0; b < 4; b++)
@@ -65,11 +71,11 @@ public class HandController : MonoBehaviour
 
     void jointMove()
     {
-        fingerMove(Thumb, boneArray, 0);
-        fingerMove(Index, boneArray, 1);
-        fingerMove(Middle, boneArray, 2);
-        fingerMove(Ring, boneArray, 3);
-        fingerMove(Pinky, boneArray, 4);
+        //fingerMove(Thumb, boneArray, 0);
+        //fingerMove(Index, boneArray, 1);
+        //fingerMove(Middle, boneArray, 2);
+        //fingerMove(Ring, boneArray, 3);
+        //fingerMove(Pinky, boneArray, 4);
     }
 
     void fingerMove(GameObject finger, Vector3[,] pos, int idx)

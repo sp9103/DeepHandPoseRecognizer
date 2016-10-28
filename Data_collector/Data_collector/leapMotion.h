@@ -216,6 +216,8 @@ void LeapMotion::ForeGroundImgs(bool save = false)
 		ForeGrouond[i] /= 255;
 		ForeGrouond[i] = img.mul(ForeGrouond[i]);
 
+		cv::resize(ForeGrouond[i], ForeGrouond[i], cv::Size(HEIGHT, HEIGHT));
+
 		if (save)
 		{
 			std::string file_path = dataDir + std::to_string(i) + "_f_" + std::to_string(data_counter) + imgExtension;
@@ -448,6 +450,9 @@ void LeapMotion::loadHands(std::string date, size_t idx)
 		myfile_binary_read.read((char*)&handsdata[i], sizeof(HandData));
 		if (myfile_binary_read.eof()) break;
 	}
+
+	if (handsdata[0].state != 0)
+		printf("here\n");
 
 	myfile_binary_read.close();
 }

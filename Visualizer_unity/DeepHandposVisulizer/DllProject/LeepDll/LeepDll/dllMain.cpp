@@ -11,6 +11,12 @@
 
 using namespace std;
 
+typedef struct writeData_{
+	float startPos[5][3];
+	float netFinger[5][4][3];
+	float oriFinger[5][4][3];
+}writeData;
+
 extern "C"{
 	LeapMotion leap;
 	FILE *fp = NULL;
@@ -102,5 +108,27 @@ extern "C"{
 		}
 
 		//Joint 맞춰주기
+		writeData binData;
+		fread(&binData, sizeof(writeData), 1, fp);
+		//첫 prev 설정
+		for (int j = 0; j < 4; j++){
+			for (int c = 0; c < 3; c++){
+				oriPrev[j * 3 + c] = binData.startPos[j][c];
+				netPrev[j * 3 + c] = binData.startPos[j][c];
+			}
+		}
+
+		for (int f = 0; f < 5; f++){
+			for (int j = 0; j < 4; j++){
+				for (int c = 0; c < 3; c++){
+					oriNext[f * 4 * 3 + j * 3 + c] = binData.oriFinger[f][j][c];
+					netNext[f * 4 * 3 + j * 3 + c] = binData.netFinger[f][j][c];
+					if (j != 0){
+						netPrev[f * 4 * 3 + j * 3 + c] = binData.oriFinger[f][j-1][c];
+						oriPrev[f * 4 * 3 + j * 3 + c] = binData.netFinger[f][j-1][c];
+					}
+				}
+			}
+		}
 	}
 }

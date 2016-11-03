@@ -92,6 +92,7 @@ public:
 
 	bool saveValid = false;
 	bool UpdatValid = false;
+	bool pauseFlag = true;
 	cv::Mat ForeGrouond[2];
 
 	void updateFrame(void);
@@ -154,7 +155,7 @@ void LeapMotion::updateFrame(void)
 {
 	frame = controller.frame();
 
-	if (saveValid && UpdatValid) data_counter++;
+	if (saveValid && UpdatValid && !pauseFlag) data_counter++;
 	saveValid = true;
 	UpdatValid = true;
 

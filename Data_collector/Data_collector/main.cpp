@@ -16,9 +16,11 @@ int main(int argc, char** argv)
 
 
 	bool load = 0; // 0:live data, 1:loaded data
-	bool save = 1;
+	bool save = 0;
 	bool show = 1;
 	bool backgroundSubtraction = 1;
+
+	int save_pause_count = 10;
 
 	cv::Ptr<cv::BackgroundSubtractor>  bg1 = cv::createBackgroundSubtractorMOG2();
 	cv::Ptr<cv::BackgroundSubtractor>  bg2 = cv::createBackgroundSubtractorMOG2();
@@ -28,18 +30,36 @@ int main(int argc, char** argv)
 
 	while (1)
 	{
+		if (save_pause_count > 0) save_pause_count--;
+		else if (GetAsyncKeyState(VK_CONTROL))
+		{
+			save_pause_count = 10;
+			if (save)
+			{
+				std::cout << "Pause save" << std::endl;
+				save = 0;
+				lm.pauseFlag = 1;
+			}
+			else
+			{
+				std::cout << "Start save" << std::endl;
+				save = 1;
+				lm.pauseFlag = 0;
+			}
+		}
+
 		if (load)
 		{
 			lm.loadImgs(loadDate, lm.data_counter);
 			lm.loadHands(loadDate, lm.data_counter);
 			if(lm.UpdatValid) lm.data_counter++;
 			lm.UpdatValid = true;
-			std::cout << "Load. data_idx :" << lm.data_counter << std::endl;
+			if(!lm.pauseFlag) std::cout << "Load. data_idx :" << lm.data_counter << std::endl;
 		}
 		else
 		{
 			lm.updateFrame();
-			std::cout << "Live. data_idx :" << lm.data_counter << std::endl;
+			if (!lm.pauseFlag)  std::cout << "Live. data_idx :" << lm.data_counter << std::endl;
 		}
 
 		if (save)

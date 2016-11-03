@@ -44,6 +44,7 @@ public:
 		std::string left_path;
 		std::string right_path;
 		float fingerJoint[5][4][3];
+		float startJoint[5][3];
 		int id;
 	}FilePath;
 

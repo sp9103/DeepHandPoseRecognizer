@@ -44,6 +44,12 @@ public class HandController : MonoBehaviour
 
     public void setBone(float[] prev, float[] next)
     {
+        fingerMove(Thumb, boneArray, 0);
+        fingerMove(Index, boneArray, 1);
+        fingerMove(Middle, boneArray, 2);
+        fingerMove(Ring, boneArray, 3);
+        fingerMove(Pinky, boneArray, 4);
+
         for (int f = 0; f < 5; f++)
         {
             for (int b = 0; b < 4; b++)
@@ -65,11 +71,11 @@ public class HandController : MonoBehaviour
 
     void jointMove()
     {
-        fingerMove(Thumb, boneArray, 0);
-        fingerMove(Index, boneArray, 1);
-        fingerMove(Middle, boneArray, 2);
-        fingerMove(Ring, boneArray, 3);
-        fingerMove(Pinky, boneArray, 4);
+        //fingerMove(Thumb, boneArray, 0);
+        //fingerMove(Index, boneArray, 1);
+        //fingerMove(Middle, boneArray, 2);
+        //fingerMove(Ring, boneArray, 3);
+        //fingerMove(Pinky, boneArray, 4);
     }
 
     void fingerMove(GameObject finger, Vector3[,] pos, int idx)
@@ -92,6 +98,36 @@ public class HandController : MonoBehaviour
             if (t.gameObject.name == "4")
             {
                 t.gameObject.transform.position = pos[idx, 3];
+            }
+        }
+    }
+
+    public void setColor(Color src)
+    {
+
+        for (int i = 0; i < 5; i++)
+        {
+            for (int j = 0; j < 4; j++)
+            {
+                Bone[i, j].GetComponent<Renderer>().material.color = src;
+            }
+        }
+
+        setJointColor(Thumb, src);
+        setJointColor(Index, src);
+        setJointColor(Middle, src);
+        setJointColor(Ring, src);
+        setJointColor(Pinky, src);
+    }
+
+    void setJointColor(GameObject finger, Color src)
+    {
+        Transform[] child = finger.transform.GetComponentsInChildren<Transform>(true);
+        foreach (Transform t in child)
+        {
+            if (t.gameObject.name == "1" || t.gameObject.name == "2" || t.gameObject.name == "3" || t.gameObject.name == "4")
+            {
+                t.GetComponent<Renderer>().material.color = src;
             }
         }
     }

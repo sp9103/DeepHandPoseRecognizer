@@ -11,8 +11,15 @@
 
 using namespace std;
 
+typedef struct writeData_{
+	float startPos[5][3];
+	float netFinger[5][4][3];
+	float oriFinger[5][4][3];
+}writeData;
+
 extern "C"{
 	LeapMotion leap;
+	FILE *fp = NULL;
 
 	void EXPORT_API TEST(){
 		MessageBox(NULL, L"Client DLL Test Successs", L"TEST", MB_OK);
@@ -93,4 +100,53 @@ extern "C"{
 		}
 	}
 
+	void EXPORT_API getBinData(char *fileName, float oriNext[], float oriPrev[], float netNext[], float netPrev[], int waitterm){
+		if (fp == NULL)
+			fp = fopen(fileName, "rb");
+		else if (fp != NULL && feof(fp))
+			fseek(fp, 0, SEEK_SET);
+
+		if (fp == NULL){
+			wchar_t pwstrDest[256];
+			int nLen = (int)strlen(fileName) + 1;
+			mbstowcs(pwstrDest, fileName, nLen);
+			MessageBox(NULL, pwstrDest, L"ERROR", MB_OK);
+
+			return;
+		}
+
+		////Joint ∏¬√Á¡÷±‚
+		//writeData binData;
+		//fread(&binData, sizeof(writeData), 1, fp);
+		//FILE *temp = fopen("test.txt", "w");
+		//FILE *temp2 = fopen("test2.txt", "w");
+		//for (int f = 0; f < 5; f++){
+		//	for (int j = 0; j < 4; j++){
+		//		for (int c = 0; c < 3; c++){
+		//			oriNext[f * 4 * 3 + j * 3 + c] = binData.oriFinger[f][j][c];
+		//			netNext[f * 4 * 3 + j * 3 + c] = binData.netFinger[f][j][c];
+		//			if (j != 0){
+		//				oriPrev[f * 4 * 3 + j * 3 + c] = binData.oriFinger[f][j - 1][c];
+		//				netPrev[f * 4 * 3 + j * 3 + c] = binData.netFinger[f][j - 1][c];
+		//			}
+		//			else if (j == 0){
+		//				oriPrev[f * 4 * 3 + j * 3 + c] = binData.startPos[f][c];
+		//				netPrev[f * 4 * 3 + j * 3 + c] = binData.startPos[f][c];
+		//			}
+
+		//			fprintf(temp, "%.4f ", oriNext[f * 4 * 3 + j * 3 + c]);
+		//			fprintf(temp2, "%.4f ", oriPrev[f * 4 * 3 + j * 3 + c]);
+		//		}
+		//		fprintf(temp, "\n");
+		//		fprintf(temp2, "\n");
+		//	}
+		//	fprintf(temp, "\n");
+		//	fprintf(temp2, "\n");
+		//}
+		//fclose(temp);
+		//fclose(temp2);
+
+		if (waitterm > 0)
+			Sleep(waitterm);
+	}
 }

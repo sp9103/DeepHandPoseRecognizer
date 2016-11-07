@@ -345,6 +345,9 @@
     <ClCompile Include="..\..\src\caffe\layers\leap_predata_single_layer.cpp">
       <Filter>src\layers</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\caffe\layers\leap_data_layer.cpp">
+      <Filter>src\layers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\caffe\proto\caffe.pb.h">
@@ -654,6 +657,9 @@
       <Filter>include\layers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\caffe\layers\leap_predata_single_layer.hpp">
+      <Filter>include\layers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\caffe\layers\leap_data_layer.hpp">
       <Filter>include\layers</Filter>
     </ClInclude>
   </ItemGroup>

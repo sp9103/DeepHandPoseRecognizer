@@ -1,9 +1,9 @@
-name: "ResNet_pretrain-18"
+name: "ResNet-18"
 layer {
   name: "data"
-  type: "LeapPredata"
+  type: "LeapData"
   top: "Image"
-  top: "finger"
+  top: "label"
   include {
     phase: TRAIN
   }
@@ -12,14 +12,14 @@ layer {
     channels: 2
     height : 240
     width : 240
-    data_path : "M:/HandData"
+    data_path : "E:/ResHandPose_data/data"
   }
 }
 layer {
   name: "data"
-  type: "LeapPredata"
+  type: "LeapData"
   top: "Image"
-  top: "finger"
+  top: "label"
   include {
     phase: TEST
   }
@@ -28,7 +28,7 @@ layer {
     channels: 2
     height : 240
     width : 240
-    data_path : "M:/HandData"
+    data_path : "E:/ResHandPose_data/data"
   }
 }
 layer {

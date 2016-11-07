@@ -41,18 +41,13 @@ void LeapDataLayer<Dtype>::DataLayerSetUp(const vector<Blob<Dtype>*>& bottom,
   top[1]->Reshape(fin_dim);													//[1] Angle (label)
 
   //전체 로드
-  Leap_DataLoadAll(data_path_.c_str());
+  Leap_LoadAll(data_path_.c_str());
   CHECK_GT(FileList.size(), 0) << "data is empty";
 
   //랜덤 박스 생성
   dataidx = 0;
   std::random_shuffle(FileList.begin(), FileList.end());
-
-  stop_thread = false;
-  ThreadCount = 4;
-  for (int i = 0; i < ThreadCount; i++){
-	  LoadThread[i] = std::thread(&LeapDataLayer::LoadFuc, this, ThreadCount, i);
-  }
+  LoadThread = std::thread(&LeapDataLayer::LoadFuc, this);
 }
 
 template <typename Dtype>
@@ -79,30 +74,24 @@ template <typename Dtype>
 void LeapDataLayer<Dtype>::Forward_cpu(const vector<Blob<Dtype>*>& bottom,
 	const vector<Blob<Dtype>*>& top) {
 	Dtype* streo_data = top[0]->mutable_cpu_data();					//[0] Left
-	Dtype* finger_data = top[1]->mutable_cpu_data();				//[1] finger postion (label)
+	Dtype* label_data = top[1]->mutable_cpu_data();				//[1] finger postion (label)
 
-	stop_thread = true;
-	for (int i = 0; i < ThreadCount; i++){
-		LoadThread[i].join();
-	}
+	while (label_blob.size() < batch_size_);
 
 	for (int i = 0; i < batch_size_; i++){
-		cv::Mat fingerMat = *finger_blob.begin();
+		int labelIdx = *label_blob.begin();
 		cv::Mat	streoImg = *streo_blob.begin();
 
 		caffe_copy(height_ * width_ * channels_, streoImg.ptr<Dtype>(0), streo_data);
-		caffe_copy(60, fingerMat.ptr<Dtype>(0), finger_data);
+		*label_data = (Dtype)labelIdx;
 
 		streo_data += top[0]->offset(1);
-		finger_data += top[1]->offset(1);
+		label_data += top[1]->offset(1);
 
-		finger_blob.pop_front();
+		save_mtx.lock();
+		label_blob.pop_front();
 		streo_blob.pop_front();
-	}
-
-	stop_thread = false;
-	for (int i = 0; i < ThreadCount; i++){
-		LoadThread[i] = std::thread(&LeapDataLayer::LoadFuc, this, ThreadCount, i);
+		save_mtx.unlock();
 	}
 }
 
@@ -240,58 +229,46 @@ bool LeapDataLayer<Dtype>::fileTypeCheck(char *fileName){
 }
 
 template <typename Dtype>
-void LeapDataLayer<Dtype>::LoadFuc(int totalThread, int id){
-	while (!stop_thread || finger_blob.size() < batch_size_){
-		FILE *fp;
-		int depthwidth, depthheight, depthType;
+void LeapDataLayer<Dtype>::LoadFuc(){
+	while (1){
+		if (label_blob.size() < 4000){
+			FilePath srcPath = FileList.at(dataidx++);
+			//불러오기 쓰레드
+			std::thread FileLoadThread = std::thread(&LeapDataLayer::ReadFuc, this, srcPath);
 
-		idx_mtx.lock();
-		int myIdx = dataidx;
-		dataidx = (dataidx + 1) % FileList.size();
-		FilePath tempPath = FileList.at(myIdx);
-		idx_mtx.unlock();
-
-		//Left & Right load
-		std::string leftFilePath = tempPath.left_path;
-		std::string rightFilePath = tempPath.right_path;
-		cv::Mat leftImg = cv::imread(leftFilePath, CV_LOAD_IMAGE_GRAYSCALE);
-		cv::Mat rightImg = cv::imread(rightFilePath, CV_LOAD_IMAGE_GRAYSCALE);
-		cv::Mat tempStreoMat(height_, width_, CV_32FC2);
-
-		if (leftImg.rows == 0 || rightImg.rows == 0)
-			continue;
-
-		for (int h = 0; h < leftImg.rows; h++){
-			for (int w = 0; w < leftImg.cols; w++){
-				tempStreoMat.at<float>(0*height_*width_ + width_*h + w) = (float)leftImg.at<uchar>(h, w) / 255.0f;
-				tempStreoMat.at<float>(1 * height_*width_ + width_*h + w) = (float)rightImg.at<uchar>(h, w) / 255.0f;
+			//초과됬을때
+			if (dataidx > FileList.size()){
+				dataidx = 0;
+				std::random_shuffle(FileList.begin(), FileList.end());
 			}
 		}
-
-		//finger load
-		cv::Mat tempFingerMat(60, 1, CV_32FC1);
-		int idx = 0;
-		for (int i = 0; i < 5; i++)
-			for (int j = 0; j < 4; j++)
-				for (int k = 0; k < 3; k++)
-					tempFingerMat.at<float>(idx++) = tempPath.fingerJoint[i][j][k];
-
-		//store
-		save_mtx.lock();
-		streo_blob.push_back(tempStreoMat);
-		finger_blob.push_back(tempFingerMat);
-		save_mtx.unlock();
-
-		if (dataidx >= this->FileList.size()){
-			idx_mtx.lock();
-			dataidx = 0;
-			std::random_shuffle(FileList.begin(), FileList.end());
-			idx_mtx.unlock();
-		}
-
-		if (streo_blob.size() > 4000)
-			break;
 	}
+}
+
+template <typename Dtype>
+void LeapDataLayer<Dtype>::ReadFuc(FilePath src){
+	//Left & Right load
+	std::string leftFilePath = src.left_path;
+	std::string rightFilePath = src.right_path;
+	cv::Mat leftImg = cv::imread(leftFilePath, CV_LOAD_IMAGE_GRAYSCALE);
+	cv::Mat rightImg = cv::imread(rightFilePath, CV_LOAD_IMAGE_GRAYSCALE);
+	cv::Mat tempStreoMat(height_, width_, CV_32FC2);
+
+	if (leftImg.rows == 0 || rightImg.rows == 0)
+		return;
+
+	for (int h = 0; h < leftImg.rows; h++){
+		for (int w = 0; w < leftImg.cols; w++){
+			tempStreoMat.at<float>(0 * height_*width_ + width_*h + w) = (float)leftImg.at<uchar>(h, w) / 255.0f;
+			tempStreoMat.at<float>(1 * height_*width_ + width_*h + w) = (float)rightImg.at<uchar>(h, w) / 255.0f;
+		}
+	}
+
+	//store
+	save_mtx.lock();
+	streo_blob.push_back(tempStreoMat);
+	label_blob.push_back(src.id);
+	save_mtx.unlock();
 }
 
 INSTANTIATE_CLASS(LeapDataLayer);

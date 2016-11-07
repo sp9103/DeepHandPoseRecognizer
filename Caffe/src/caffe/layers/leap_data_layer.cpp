@@ -41,7 +41,7 @@ void LeapDataLayer<Dtype>::DataLayerSetUp(const vector<Blob<Dtype>*>& bottom,
   top[1]->Reshape(fin_dim);													//[1] Angle (label)
 
   //전체 로드
-  Leap_PredataLoadAll(data_path_.c_str());
+  Leap_DataLoadAll(data_path_.c_str());
   CHECK_GT(FileList.size(), 0) << "data is empty";
 
   //랜덤 박스 생성

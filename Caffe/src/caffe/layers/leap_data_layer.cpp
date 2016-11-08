@@ -136,10 +136,10 @@ void LeapDataLayer<Dtype>::Leap_LoadAll(const char* datapath){
 				//Tchar to char
 				size_t clen;
 				StringCchLength(cDir, MAX_PATH, &clen);
-				WideCharToMultiByte(CP_ACP, 0, ffd.cFileName, clen, ccDataName, 256, NULL, NULL);
-				printf("directory : %s load.\n", ccDataName);
+				WideCharToMultiByte(CP_ACP, 0, cffd.cFileName, clen, ccDataName, 256, NULL, NULL);
+				printf("File : %s load.\n", ccDataName);
 
-				if (ccDataName[0] != 0){
+				if (ccDataName[0] != '.'){
 					int idx = 0;
 					char handFile[256];
 					sprintf(handFile, "%s\\%s\\%s\\handsData.dat", datapath, ccFileName, ccDataName);
@@ -154,7 +154,7 @@ void LeapDataLayer<Dtype>::Leap_LoadAll(const char* datapath){
 						}
 						if (targetData.state != 0){
 							FilePath tempPath;
-							tempPath.id = ccDataName[0] - '0';
+							tempPath.id = ccFileName[0] - '0';
 							char file_left[256], file_right[256];
 							int img_idx = targetData.data_counter;
 							sprintf(file_left, "%s\\%s\\%s\\Resize\\%d_f_%d.jpg", datapath, ccFileName, ccDataName, 0, img_idx);

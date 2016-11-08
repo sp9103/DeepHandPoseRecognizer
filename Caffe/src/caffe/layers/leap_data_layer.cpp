@@ -77,7 +77,8 @@ void LeapDataLayer<Dtype>::Forward_cpu(const vector<Blob<Dtype>*>& bottom,
 
 	for (int i = 0; i < batch_size_; i++){
 		save_mtx.lock();
-		while (label_blob.size() < 1);
+		while (label_blob.size() < 1)
+			printf("wait thread\n");
 		int labelIdx = *label_blob.begin();
 		cv::Mat	streoImg = *streo_blob.begin();
 
@@ -200,7 +201,6 @@ bool LeapDataLayer<Dtype>::fileTypeCheck(char *fileName){
 template <typename Dtype>
 void LeapDataLayer<Dtype>::LoadFuc(){
 	const int ThreadLimit = 2000;
-	const int DataBufLimit = 4000;
 	std::thread FileLoadThread[ThreadLimit];
 	int ThreadIdx = 0, dataidx = 0;
 	for (int i = 0; i < ThreadLimit; i++){
@@ -215,12 +215,15 @@ void LeapDataLayer<Dtype>::LoadFuc(){
 		if (label_count < ThreadLimit){
 			FilePath srcPath = FileList.at(dataidx++);
 			//불러오기 쓰레드
-			FileLoadThread[ThreadIdx].join();
+			if (FileLoadThread[ThreadIdx].joinable())
+				FileLoadThread[ThreadIdx].join();
+			else
+				printf("noting.\n");
 			FileLoadThread[ThreadIdx] = std::thread(&LeapDataLayer::ReadFuc, this, srcPath);
 			ThreadIdx = (ThreadIdx + 1) % ThreadLimit;
 
 			//초과됬을때
-			if (dataidx > FileList.size()){
+			if (dataidx >= FileList.size()){
 				dataidx = 0;
 				std::random_shuffle(FileList.begin(), FileList.end());
 			}

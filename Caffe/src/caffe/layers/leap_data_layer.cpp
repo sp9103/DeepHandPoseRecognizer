@@ -35,10 +35,8 @@ void LeapDataLayer<Dtype>::DataLayerSetUp(const vector<Blob<Dtype>*>& bottom,
 
   top[0]->Reshape(batch_size_, 2, height_, width_);					//[0] streo
 
-  std::vector<int> fin_dim(2);
-  fin_dim[0] = batch_size_;
-  fin_dim[1] = 1;
-  top[1]->Reshape(fin_dim);													//[1] Angle (label)
+  vector<int> label_shape(1, batch_size_);
+  top[1]->Reshape(label_shape);													//[1] Angle (label)
 
   //전체 로드
   Leap_LoadAll(data_path_.c_str());
@@ -77,13 +75,20 @@ void LeapDataLayer<Dtype>::Forward_cpu(const vector<Blob<Dtype>*>& bottom,
 
 	for (int i = 0; i < batch_size_; i++){
 		save_mtx.lock();
-		while (label_blob.size() < 1)
-			printf("wait thread\n");
-		int labelIdx = *label_blob.begin();
-		cv::Mat	streoImg = *streo_blob.begin();
+		int labelIdx;
+		cv::Mat	streoImg;
+		if (label_blob.size() > 1){
+			labelIdx = *label_blob.begin();
+			streoImg = *streo_blob.begin();
 
-		label_blob.pop_front();
-		streo_blob.pop_front();
+			label_blob.pop_front();
+			streo_blob.pop_front();
+		}
+		else{
+			i--;
+			save_mtx.unlock();
+			continue;
+		}
 		save_mtx.unlock();
 
 		caffe_copy(height_ * width_ * channels_, streoImg.ptr<Dtype>(0), streo_data);

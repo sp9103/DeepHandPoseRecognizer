@@ -157,8 +157,8 @@ void LeapDataLayer<Dtype>::Leap_LoadAll(const char* datapath){
 							tempPath.id = ccFileName[0] - '0';
 							char file_left[256], file_right[256];
 							int img_idx = targetData.data_counter;
-							sprintf(file_left, "%s\\%s\\%s\\Resize\\%d_f_%d.jpg", datapath, ccFileName, ccDataName, 0, img_idx);
-							sprintf(file_right, "%s\\%s\\%s\\Resize\\%d_f_%d.jpg", datapath, ccFileName, ccDataName, 1, img_idx);
+							sprintf(file_left, "%s\\%s\\%s\\%d_f_%d.jpg", datapath, ccFileName, ccDataName, 0, img_idx);
+							sprintf(file_right, "%s\\%s\\%s\\%d_f_%d.jpg", datapath, ccFileName, ccDataName, 1, img_idx);
 							tempPath.left_path = file_left;
 							tempPath.right_path = file_right;
 
@@ -168,6 +168,8 @@ void LeapDataLayer<Dtype>::Leap_LoadAll(const char* datapath){
 										tempPath.fingerJoint[i][j][k] = targetData.finger[i].bone[j][1][k] / 10.f;
 
 							FileList.push_back(tempPath);
+							if (data_limit_ != 0 && data_limit_ < FileList.size())
+								return;
 						}
 					}
 					fclose(fp);
@@ -197,11 +199,21 @@ bool LeapDataLayer<Dtype>::fileTypeCheck(char *fileName){
 
 template <typename Dtype>
 void LeapDataLayer<Dtype>::LoadFuc(){
+	const int ThreadLimit = 4000;
+	std::thread FileLoadThread[ThreadLimit];
+	int ThreadIdx = 0;
+	for (int i = 0; i < ThreadLimit; i++){
+		FilePath srcPath = FileList.at(dataidx++);
+		FileLoadThread[i] = std::thread(&LeapDataLayer::ReadFuc, this, srcPath);
+	}
+
 	while (1){
 		if (label_blob.size() < 4000){
 			FilePath srcPath = FileList.at(dataidx++);
 			//불러오기 쓰레드
-			std::thread FileLoadThread = std::thread(&LeapDataLayer::ReadFuc, this, srcPath);
+			FileLoadThread[ThreadIdx].join();
+			FileLoadThread[ThreadIdx] = std::thread(&LeapDataLayer::ReadFuc, this, srcPath);
+			ThreadIdx = (ThreadIdx + 1) % ThreadLimit;
 
 			//초과됬을때
 			if (dataidx > FileList.size()){

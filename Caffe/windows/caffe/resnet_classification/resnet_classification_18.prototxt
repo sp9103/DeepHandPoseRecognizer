@@ -13,6 +13,7 @@ layer {
     height : 240
     width : 240
     data_path : "E:/ResHandPose_data/data"
+    data_limit : 10000
   }
 }
 layer {
@@ -29,6 +30,7 @@ layer {
     height : 240
     width : 240
     data_path : "E:/ResHandPose_data/data"
+    data_limit : 10000
   }
 }
 layer {

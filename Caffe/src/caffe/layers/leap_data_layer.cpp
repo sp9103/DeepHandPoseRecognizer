@@ -131,7 +131,6 @@ void LeapDataLayer<Dtype>::Leap_LoadAll(const char* datapath){
 			WIN32_FIND_DATA cffd;
 			sprintf(classPath, "%s\\%s\\*", datapath, ccFileName);
 			MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, classPath, strlen(classPath), cDir, MAX_PATH);
-			StringCchCat(cDir, MAX_PATH, TEXT("\\*"));
 			HANDLE dFind = FindFirstFile(cDir, &cffd);
 			while (FindNextFile(dFind, &cffd) != 0){
 				//Tchar to char

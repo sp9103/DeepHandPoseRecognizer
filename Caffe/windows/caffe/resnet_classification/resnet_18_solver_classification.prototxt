@@ -4,7 +4,7 @@ test_interval: 4000
 test_initialization: false
 display: 40
 average_loss: 40
-base_lr: 0.1
+base_lr: 0.001
 lr_policy: "step"
 stepsize: 320000
 gamma: 0.96

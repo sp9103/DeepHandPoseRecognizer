@@ -100,9 +100,6 @@ namespace caffe {
 
 		std::mutex save_mtx;
 		std::thread LoadThread;
-
-		int *randbox;
-		int dataidx;
 	};
 
 }  // namespace caffe

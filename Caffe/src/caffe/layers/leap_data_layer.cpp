@@ -45,7 +45,6 @@ void LeapDataLayer<Dtype>::DataLayerSetUp(const vector<Blob<Dtype>*>& bottom,
   CHECK_GT(FileList.size(), 0) << "data is empty";
 
   //랜덤 박스 생성
-  dataidx = 0;
   std::random_shuffle(FileList.begin(), FileList.end());
   LoadThread = std::thread(&LeapDataLayer::LoadFuc, this);
 }
@@ -76,22 +75,21 @@ void LeapDataLayer<Dtype>::Forward_cpu(const vector<Blob<Dtype>*>& bottom,
 	Dtype* streo_data = top[0]->mutable_cpu_data();					//[0] Left
 	Dtype* label_data = top[1]->mutable_cpu_data();				//[1] finger postion (label)
 
-	while (label_blob.size() < batch_size_);
-
 	for (int i = 0; i < batch_size_; i++){
+		save_mtx.lock();
+		while (label_blob.size() < 1);
 		int labelIdx = *label_blob.begin();
 		cv::Mat	streoImg = *streo_blob.begin();
+
+		label_blob.pop_front();
+		streo_blob.pop_front();
+		save_mtx.unlock();
 
 		caffe_copy(height_ * width_ * channels_, streoImg.ptr<Dtype>(0), streo_data);
 		*label_data = (Dtype)labelIdx;
 
 		streo_data += top[0]->offset(1);
 		label_data += top[1]->offset(1);
-
-		save_mtx.lock();
-		label_blob.pop_front();
-		streo_blob.pop_front();
-		save_mtx.unlock();
 	}
 }
 
@@ -154,7 +152,9 @@ void LeapDataLayer<Dtype>::Leap_LoadAll(const char* datapath){
 						}
 						if (targetData.state != 0){
 							FilePath tempPath;
-							tempPath.id = ccFileName[0] - '0';
+							tempPath.id = atoi(ccFileName);
+							if (tempPath.id < 0 || tempPath.id > 13)
+								printf("Error Label create\n");
 							char file_left[256], file_right[256];
 							int img_idx = targetData.data_counter;
 							sprintf(file_left, "%s\\%s\\%s\\%d_f_%d.jpg", datapath, ccFileName, ccDataName, 0, img_idx);
@@ -199,16 +199,20 @@ bool LeapDataLayer<Dtype>::fileTypeCheck(char *fileName){
 
 template <typename Dtype>
 void LeapDataLayer<Dtype>::LoadFuc(){
-	const int ThreadLimit = 4000;
+	const int ThreadLimit = 2000;
+	const int DataBufLimit = 4000;
 	std::thread FileLoadThread[ThreadLimit];
-	int ThreadIdx = 0;
+	int ThreadIdx = 0, dataidx = 0;
 	for (int i = 0; i < ThreadLimit; i++){
 		FilePath srcPath = FileList.at(dataidx++);
 		FileLoadThread[i] = std::thread(&LeapDataLayer::ReadFuc, this, srcPath);
 	}
 
 	while (1){
-		if (label_blob.size() < 4000){
+		save_mtx.lock();
+		int label_count = label_blob.size();
+		save_mtx.unlock();
+		if (label_count < ThreadLimit){
 			FilePath srcPath = FileList.at(dataidx++);
 			//불러오기 쓰레드
 			FileLoadThread[ThreadIdx].join();

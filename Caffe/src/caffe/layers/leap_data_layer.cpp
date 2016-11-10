@@ -205,7 +205,7 @@ bool LeapDataLayer<Dtype>::fileTypeCheck(char *fileName){
 
 template <typename Dtype>
 void LeapDataLayer<Dtype>::LoadFuc(){
-	const int ThreadLimit = 2000;
+	const int ThreadLimit = 4000;
 	std::thread FileLoadThread[ThreadLimit];
 	int ThreadIdx = 0, dataidx = 0;
 	for (int i = 0; i < ThreadLimit; i++){
@@ -214,9 +214,7 @@ void LeapDataLayer<Dtype>::LoadFuc(){
 	}
 
 	while (1){
-		save_mtx.lock();
 		int label_count = label_blob.size();
-		save_mtx.unlock();
 		if (label_count < ThreadLimit){
 			FilePath srcPath = FileList.at(dataidx++);
 			//불러오기 쓰레드

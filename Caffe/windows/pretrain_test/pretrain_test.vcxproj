@@ -63,6 +63,7 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="LeapDataLoader.cpp" />
     <ClCompile Include="Leap_pretrain_data_loader.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
@@ -80,6 +81,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="LeapDataLoader.h" />
     <ClInclude Include="Leap_pretrain_data_loader.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

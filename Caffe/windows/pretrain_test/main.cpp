@@ -180,6 +180,9 @@ int main(){
 	//Test & 통계 내기;
 	Blob<float> rgbBlob(1, 2, 240, 240);
 
+	int successBox[14], failBox[14];
+	memset(successBox, 0, sizeof(int) * 14);
+	memset(failBox, 0, sizeof(int) * 14);
 	int success = 0, fail = 0;
 	for (int i = 0; i < dataLoader.getCount(); i++){
 		cv::Mat left, right;
@@ -206,16 +209,25 @@ int main(){
 		memcpy(resultProb, result.at(0)->cpu_data(), sizeof(float) * 14);
 		int answer = findMaxIdx(resultProb, 14);
 
-		if (label == answer)
+		if (label == answer){
 			success++;
+			successBox[label]++;
+		}
 		else{
 			fail++;
 			cv::imshow("img", left);
 			cv::waitKey(1);
+			failBox[label]++;
 		}
+
+		printf("accuracy : %f\n", (float)success / (float)(success + fail));
 	}
 
-	printf("percent : %f\n", (float)success / (float)(success + fail));
+	printf("Final accuracy : %f\n", (float)success / (float)(success + fail));
+	for (int i = 0; i < 14; i++){
+		printf("%f ", (float)successBox[i] / (float)(successBox[i] + failBox[i]));
+	}
+	printf("\n");
 
 	return 0;
 }

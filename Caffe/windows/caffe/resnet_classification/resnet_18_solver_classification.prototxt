@@ -12,5 +12,5 @@ max_iter: 600000
 momentum: 0.9
 weight_decay: 0.0001
 snapshot: 40000
-snapshot_prefix: "resnet_classification/snapshot/resnet_18"
+snapshot_prefix: "resnet_classification/snapshot_1111/resnet_18"
 solver_mode: GPU

@@ -306,7 +306,7 @@ message ParamSpec {
 // NOTE
 // Update the next available ID when you add a new LayerParameter field.
 //
-// LayerParameter next available layer-specific ID: 147 (last added: parameter_param)
+// LayerParameter next available layer-specific ID: 148 (last added: parameter_param)
 message LayerParameter {
   optional string name = 1; // the layer name
   optional string type = 2; // the layer type
@@ -403,6 +403,7 @@ message LayerParameter {
   optional TileParameter tile_param = 138;
   optional WindowDataParameter window_data_param = 129;
   optional DataLoadParameter data_load_param = 146;
+  optional GMMParameter gmm_param = 147;
 }
 
 // Message that stores parameters used to apply transformation
@@ -1392,5 +1393,14 @@ message DataLoadParameter {
   optional string data_path = 5;
 
   optional uint32 data_limit = 6 [default = 0];			//0이면 전부 로드
+}
+
+// Message custom_data_layer parameter
+message GMMParameter {
+  // Specify the data source.
+  optional uint32 class_size = 1;
+  optional uint32 data_dim = 2;
+  optional int32  sigma_min = 3 [default = 5];
+  optional int32 sigma_max = 4 [default = -20];
 }
 

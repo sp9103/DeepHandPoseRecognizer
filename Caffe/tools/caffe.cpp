@@ -393,8 +393,11 @@ int main(int argc, char** argv) {
 	int targc = 4;
 	//char *targv[5] = { "bin\\caffe.exe", "train", "--solver=resnet_pretrain_single/resnet_pretrain_18_single_solver.prototxt", "--gpu=all" };
 	/////////////////////////////////////////Train///////////////////////////////////////////////////////////////////////////////////////////////////
+	/*char *targv[5] = { "bin\\caffe.exe", "train", "--solver=resnet_classification/resnet_18_solver_classification.prototxt",
+		"--weights=resnet_pretrain/snapshot_pretrain/resnet_pretrain_18_iter_200000.caffemodel","--gpu=all" };*/
+	//////////////////////////////////////////////Fine tuning////////////////////////////////////////////////////////////////////////////////////////
 	char *targv[5] = { "bin\\caffe.exe", "train", "--solver=resnet_classification/resnet_18_solver_classification.prototxt",
-		"--weights=resnet_pretrain/snapshot_pretrain/resnet_pretrain_18_iter_200000.caffemodel","--gpu=all" };
+	"--weights=resnet_classification/snapshot/resnet_18_iter_280000.caffemodel","--gpu=all" };
 
 	char **argvp;
 	argvp = &targv[0];

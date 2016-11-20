@@ -396,8 +396,15 @@ int main(int argc, char** argv) {
 	/*char *targv[5] = { "bin\\caffe.exe", "train", "--solver=resnet_classification/resnet_18_solver_classification.prototxt",
 		"--weights=resnet_pretrain/snapshot_pretrain/resnet_pretrain_18_iter_200000.caffemodel","--gpu=all" };*/
 	//////////////////////////////////////////////Fine tuning////////////////////////////////////////////////////////////////////////////////////////
+	/*char *targv[5] = { "bin\\caffe.exe", "train", "--solver=resnet_classification/resnet_18_solver_classification.prototxt",
+	"--weights=resnet_classification/snapshot/resnet_18_iter_280000.caffemodel","--gpu=all" };*/
+	/////////////////////////////////////////////single trainig/////////////////////////////////////////////////////////////////////////////////
+	//char *targv[5] = { "bin\\caffe.exe", "train", "--solver=resnet_classification_single/resnet_18_solver_classification_single.prototxt",
+	//	"--weights=resnet_pretrain_single/snapshot_pretrain/resnet_pretrain_18_single_iter_200000.caffemodel", "--gpu=all" };
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	char *targv[5] = { "bin\\caffe.exe", "train", "--solver=resnet_classification/resnet_18_solver_classification.prototxt",
-	"--weights=resnet_classification/snapshot/resnet_18_iter_280000.caffemodel","--gpu=all" };
+	"--snapshot=resnet_classification/snapshot_1111/resnet_18_iter_42485.solverstate","--gpu=all" };
+
 
 	char **argvp;
 	argvp = &targv[0];

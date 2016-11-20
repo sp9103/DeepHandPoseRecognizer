@@ -1,4 +1,5 @@
 #include <caffe\caffe.hpp>
+#include < windows.h >
 
 //#include "Leap_pretrain_data_loader.h"
 #include "LeapDataLoader.h"
@@ -11,9 +12,13 @@
 //#define SOLVER "..\\caffe\\resnet_pretrain_single\\resnet_pretrain_18_single_deploy.prototxt"
 //#define TRAINRESULT "..\\caffe\\resnet_pretrain_single\\snapshot_pretrain\\resnet_pretrain_18_single_iter_200000.caffemodel"
 
+////Classification
+//#define SOLVER "..\\caffe\\resnet_classification\\resnet_classification_18_deploy.prototxt"
+//#define TRAINRESULT "..\\caffe\\resnet_classification\\snapshot_1111\\resnet_18_iter_40000.caffemodel"
+
 //Classification
-#define SOLVER "..\\caffe\\resnet_classification\\resnet_classification_18_deploy.prototxt"
-#define TRAINRESULT "..\\caffe\\resnet_classification\\snapshot\\resnet_18_iter_280000.caffemodel"
+#define SOLVER "..\\caffe\\resnet_classification_single\\resnet_classification_18_deploy_single.prototxt"
+#define TRAINRESULT "..\\caffe\\resnet_classification_single\\snapshot\\resnet_18_iter_200000.caffemodel"
 
 typedef struct resultData_{
 	float Thumb;
@@ -178,29 +183,31 @@ int main(){
 	dataLoader.LoadDataAll("E:\\ResHandPose_data\\TEST");
 
 	//Test & 통계 내기;
-	Blob<float> rgbBlob(1, 2, 240, 240);
+	Blob<float> rgbBlob(1, /*2*/1, 240, 240);
 
 	int successBox[14], failBox[14];
 	memset(successBox, 0, sizeof(int) * 14);
 	memset(failBox, 0, sizeof(int) * 14);
 	int success = 0, fail = 0;
+	float totalTime = 0;
 	for (int i = 0; i < dataLoader.getCount(); i++){
 		cv::Mat left, right;
 		int label;
 
 		dataLoader.getData(&left, &right, &label, i);
 
-		cv::Mat streoMat(240, 240, CV_32FC2);
+		DWORD start = GetTickCount();
+		cv::Mat streoMat(240, 240, CV_32FC1);
 		for (int h = 0; h < 240; h++){
 			for (int w = 0; w < 240; w++){
 				streoMat.at<float>(0 * 240 * 240 + 240 * h + w) = (float)left.at<uchar>(h, w) / 255.0f;
-				streoMat.at<float>(1 * 240 * 240 + 240 * h + w) = (float)right.at<uchar>(h, w) / 255.0f;
+				//streoMat.at<float>(1 * 240 * 240 + 240 * h + w) = (float)right.at<uchar>(h, w) / 255.0f;
 			}
 		}
 
 		//network calculate
 		float loss;
-		memcpy(rgbBlob.mutable_cpu_data(), streoMat.ptr<float>(0), sizeof(float) * 240 * 240 * 2);
+		memcpy(rgbBlob.mutable_cpu_data(), streoMat.ptr<float>(0), sizeof(float) * 240 * 240 * /*2*/1);
 		vector<Blob<float>*> input_vec;				//입력 RGB, DEPTH
 		input_vec.push_back(&rgbBlob);
 		const vector<Blob<float>*>& result = caffe_test_net.Forward(input_vec, &loss);
@@ -208,6 +215,11 @@ int main(){
 		float resultProb[14];
 		memcpy(resultProb, result.at(0)->cpu_data(), sizeof(float) * 14);
 		int answer = findMaxIdx(resultProb, 14);
+
+		DWORD end = GetTickCount();
+
+		printf("\n실행시간 : %lf \n", (end - start));
+		totalTime += (end - start);
 
 		if (label == answer){
 			success++;
@@ -223,6 +235,7 @@ int main(){
 		printf("accuracy : %f\n", (float)success / (float)(success + fail));
 	}
 
+	printf("Time : %f\n", totalTime / dataLoader.getCount());
 	printf("Final accuracy : %f\n", (float)success / (float)(success + fail));
 	for (int i = 0; i < 14; i++){
 		printf("%f ", (float)successBox[i] / (float)(successBox[i] + failBox[i]));

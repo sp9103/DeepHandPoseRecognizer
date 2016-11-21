@@ -22,11 +22,11 @@ public class LeepController : MonoBehaviour {
     private static extern void getFingerData(float[] next, float[] prev);
 
     public GameObject HandModel;
-    public Slider[] probSlider = new Slider[10];
+    public Slider[] probSlider = new Slider[14];
     public Image[] LeapImage = new Image[2];
 
     //GEST_COUNT
-    private float[] prob = new float[10];
+    private float[] prob = new float[14];
     private float[] palm_pos = new float[3];
     private float[] palm_norm = new float[3];
     private float[] palm_dir = new float[3];
@@ -53,16 +53,29 @@ public class LeepController : MonoBehaviour {
 	void Update () {
         LeapUpdataFrame();
         setCamFrame();
-        setHand();
-        visProb();
+        int checkHand = setHand();
+        if (checkHand == -1)
+            visProb(0);
+        else
+            visProb(1);
     }
 
-    void visProb()
+    void visProb(int check)
     {
-        CalcProbabilty(prob);
-        for (int i = 0; i < 10; i++)
+        if (check == 1)
         {
-            probSlider[i].value = prob[i];
+            CalcProbabilty(prob);
+            for (int i = 0; i < 14; i++)
+            {
+                probSlider[i].value = prob[i];
+            }
+        }
+        else
+        {
+            for (int i = 0; i < 14; i++)
+            {
+                probSlider[i].value = 0.0f;
+            }
         }
     }
 

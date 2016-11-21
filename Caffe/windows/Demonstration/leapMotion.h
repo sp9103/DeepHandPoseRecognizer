@@ -100,13 +100,18 @@ LeapMotion::~LeapMotion()
 
 void LeapMotion::Init(){
 	controller = new Leap::Controller();
-	controller->setPolicy(Leap::Controller::POLICY_IMAGES);
 	controller->setPolicy(Leap::Controller::POLICY_BACKGROUND_FRAMES);
+	controller->setPolicy(Leap::Controller::POLICY_IMAGES);
 }
 
 
 void LeapMotion::updateFrame(void)
 {
+	if (controller->isPolicySet(Leap::Controller::POLICY_BACKGROUND_FRAMES)){
+		printf("false\n");
+		controller->setPolicy(Leap::Controller::POLICY_BACKGROUND_FRAMES);
+	}
+
 	frame = controller->frame();
 
 	if (isValid) data_counter++;

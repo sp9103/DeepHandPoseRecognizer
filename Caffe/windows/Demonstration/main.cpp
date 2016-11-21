@@ -74,11 +74,11 @@ int main(){
 		float resultProb[14];
 		memcpy(resultProb, result.at(0)->cpu_data(), sizeof(float) * 14);
 		
-		server.sendVec(resultProb);
-		for (int i = 0; i < 14; i++){
-			printf("%.2f ", resultProb[i]);
-		}
-		printf("\n");
+		//server.sendVec(resultProb);
+		//for (int i = 0; i < 14; i++){
+		//	printf("%.2f ", resultProb[i]);
+		//}
+		//printf("\n");
 
 		cv::imshow("Image", left);
 		if (cv::waitKey(10) == 27)

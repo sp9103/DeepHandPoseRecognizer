@@ -144,10 +144,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="dllMain.cpp" />
+    <ClCompile Include="ResHandClient.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="leapMotion.h" />
     <ClInclude Include="openCV.h" />
+    <ClInclude Include="ResHandClient.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

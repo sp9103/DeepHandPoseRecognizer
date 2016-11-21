@@ -839,4 +839,9 @@ layer {
       value: 0
     }
   }
+}layer {
+  name: "prob"
+  type: "Softmax"
+  bottom: "fc14"
+  top: "prob"
 }

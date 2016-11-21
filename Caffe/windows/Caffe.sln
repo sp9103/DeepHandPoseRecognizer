@@ -74,6 +74,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{FC0708
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pretrain_test", "pretrain_test\pretrain_test.vcxproj", "{B2D407D4-6083-4E42-A8CF-100232689486}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Demonstration", "Demonstration\Demonstration.vcxproj", "{5FCFB770-5C50-4FFC-B5FA-C5A216FA86E0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Mixed Platforms = Debug|Mixed Platforms
@@ -218,6 +220,16 @@ Global
 		{B2D407D4-6083-4E42-A8CF-100232689486}.Release|Win32.ActiveCfg = Release|x64
 		{B2D407D4-6083-4E42-A8CF-100232689486}.Release|x64.ActiveCfg = Release|x64
 		{B2D407D4-6083-4E42-A8CF-100232689486}.Release|x64.Build.0 = Release|x64
+		{5FCFB770-5C50-4FFC-B5FA-C5A216FA86E0}.Debug|Mixed Platforms.ActiveCfg = Debug|x64
+		{5FCFB770-5C50-4FFC-B5FA-C5A216FA86E0}.Debug|Mixed Platforms.Build.0 = Debug|x64
+		{5FCFB770-5C50-4FFC-B5FA-C5A216FA86E0}.Debug|Win32.ActiveCfg = Debug|x64
+		{5FCFB770-5C50-4FFC-B5FA-C5A216FA86E0}.Debug|x64.ActiveCfg = Debug|x64
+		{5FCFB770-5C50-4FFC-B5FA-C5A216FA86E0}.Debug|x64.Build.0 = Debug|x64
+		{5FCFB770-5C50-4FFC-B5FA-C5A216FA86E0}.Release|Mixed Platforms.ActiveCfg = Release|x64
+		{5FCFB770-5C50-4FFC-B5FA-C5A216FA86E0}.Release|Mixed Platforms.Build.0 = Release|x64
+		{5FCFB770-5C50-4FFC-B5FA-C5A216FA86E0}.Release|Win32.ActiveCfg = Release|x64
+		{5FCFB770-5C50-4FFC-B5FA-C5A216FA86E0}.Release|x64.ActiveCfg = Release|x64
+		{5FCFB770-5C50-4FFC-B5FA-C5A216FA86E0}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

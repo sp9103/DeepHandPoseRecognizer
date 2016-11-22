@@ -89,8 +89,8 @@ void ResHandClient::DeInit(){
 	WSACleanup();
 }
 
-void ResHandClient::Recv(float *dst){								//추후 구조체
-	char message[256];
+void ResHandClient::Recv(HandClass *dst){								//추후 구조체
+	char message[1024];
 
 	// 데이터 수신 
 	int strLen = recv(hSocket, message, sizeof(message) - 1, 0);
@@ -99,5 +99,5 @@ void ResHandClient::Recv(float *dst){								//추후 구조체
 		ErrorHandling("read() error");
 	}
 	message[strLen] = 0;
-	memcpy(dst, message, sizeof(float) * 14);
+	memcpy(dst, message, sizeof(HandClass));
 }

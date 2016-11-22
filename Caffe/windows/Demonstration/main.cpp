@@ -47,7 +47,7 @@ int main(){
 	ResHandServer server;
 	server.Init(NULL, 2252);
 
-	while(1){
+	while (1){
 		cv::Mat left, right;
 		leap.updateFrame();
 
@@ -71,16 +71,38 @@ int main(){
 		input_vec.push_back(&rgbBlob);
 		const vector<Blob<float>*>& result = caffe_test_net.Forward(input_vec, &loss);
 
-		float resultProb[14];
-		memcpy(resultProb, result.at(0)->cpu_data(), sizeof(float) * 14);
-		
-		//server.sendVec(resultProb);
+		//구조체 처리
+		HandClass tempData;
+		memcpy(tempData.prob, result.at(0)->cpu_data(), sizeof(float) * 14);
+		for (int i = 0; i < 2; i++){
+			if (!leap.handsdata[i].state)
+				continue;
+
+			if (!leap.handsdata[i].isLeft){
+				tempData.isHand = 1;
+			}
+		}
+		for (int h = 0; h < 2; h++){
+			if (leap.handsdata[h].state && !leap.handsdata[h].isLeft){
+				for (int f = 0; f < 5; f++){				//finger idx
+					for (int b = 0; b < 4; b++){			//bon idx
+						for (int k = 0; k < 3; k++){
+							tempData.next[f * 4 * 3 + b * 3 + k] = leap.handsdata[h].finger[f].bone[b][1][k];
+							tempData.prev[f * 4 * 3 + b * 3 + k] = leap.handsdata[h].finger[f].bone[b][0][k];
+						}
+					}
+				}
+			}
+		}
+
+		server.sendVec(tempData);
 		//for (int i = 0; i < 14; i++){
 		//	printf("%.2f ", resultProb[i]);
 		//}
 		//printf("\n");
 
-		cv::imshow("Image", left);
+		cv::imshow("Left", left);
+		cv::imshow("Right", right);
 		if (cv::waitKey(10) == 27)
 			break;
 	}

@@ -97,8 +97,8 @@ void ResHandServer::DeInit(){
 	WSACleanup();
 }
 
-void ResHandServer::sendVec(float *data){
-	char buf[256];
-	memcpy(buf, data, sizeof(float) * 14);
-	send(hClntSock, buf, sizeof(float) * 14, 0);
+void ResHandServer::sendVec(HandClass data){
+	char buf[1024];
+	memcpy(buf, &data, sizeof(HandClass));
+	send(hClntSock, buf, sizeof(HandClass), 0);
 }

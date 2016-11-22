@@ -6,6 +6,13 @@
 
 #pragma comment(lib, "ws2_32.lib")
 
+typedef struct HandClass_{
+	int isHand;
+	float prob[14];
+	float next[60];
+	float prev[60];
+}HandClass;
+
 class ResHandServer
 {
 public:
@@ -15,7 +22,7 @@ public:
 	void GetIPAddress(char *ip);
 	void Init(char *ip, int portNum);
 	void DeInit();
-	void sendVec(float *);
+	void sendVec(HandClass src);
 
 private:
 	int _portNum;

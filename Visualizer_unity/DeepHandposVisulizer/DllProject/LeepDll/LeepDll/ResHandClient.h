@@ -6,6 +6,13 @@
 
 #pragma comment(lib, "ws2_32.lib")
 
+typedef struct HandClass_{
+	int isHand;
+	float prob[14];
+	float next[60];
+	float prev[60];
+}HandClass;
+
 class ResHandClient
 {
 public:
@@ -16,7 +23,7 @@ public:
 	void DeInit();
 
 	int getData(float *dst);
-	void Recv(float *dst);
+	void Recv(HandClass *dst);
 
 private:
 	int _portNum;

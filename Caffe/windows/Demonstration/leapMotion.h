@@ -107,10 +107,6 @@ void LeapMotion::Init(){
 
 void LeapMotion::updateFrame(void)
 {
-	if (controller->isPolicySet(Leap::Controller::POLICY_BACKGROUND_FRAMES)){
-		printf("false\n");
-		controller->setPolicy(Leap::Controller::POLICY_BACKGROUND_FRAMES);
-	}
 
 	frame = controller->frame();
 

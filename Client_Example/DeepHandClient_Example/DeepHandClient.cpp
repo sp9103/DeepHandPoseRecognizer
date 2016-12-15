@@ -62,7 +62,8 @@ void DeepHandClient::Init(char *ip, int portNum){
 }
 
 void DeepHandClient::DeInit(){
-
+	closesocket(hSocket);
+	WSACleanup();  /* Cleanup Winsock */
 }
 
 void DeepHandClient::ErrorHandling(char *message)
@@ -72,4 +73,35 @@ void DeepHandClient::ErrorHandling(char *message)
 	LPCWSTR test = text1;
 
 	MessageBox(NULL, test, L"DLL Error", MB_OK);
+}
+
+int DeepHandClient::SendAndRecognition(cv::Mat src){
+	if (src.rows != 240 || src.cols != 240)
+		cv::resize(src, src, cv::Size(240, 240));
+
+	char buf[173060];
+	ImgPacket sendData;
+	sendData.channel = src.channels();
+	GetIPAddress(sendData.senderIP);
+	memcpy(buf, src.ptr(0), sizeof(ImgPacket));
+
+	//send data
+	if (sendto(hSocket, buf, sizeof(ImgPacket), 0, (struct sockaddr *)
+		&servAddr, sizeof(servAddr)) != sizeof(ImgPacket))
+		ErrorHandling("sendto() sent a different number of bytes than expected");
+
+	char recvBuf[4];
+	int fromSize;
+	if (recvfrom(hSocket, recvBuf, sizeof(int), 0, (struct sockaddr *) &fromAddr,
+		&fromSize) != sizeof(int))
+		ErrorHandling("recvfrom() failed");
+
+	if (servAddr.sin_addr.s_addr != fromAddr.sin_addr.s_addr)
+	{
+		ErrorHandling("Error: received a packet from unknown source.\n");
+	}
+
+	int returnVal;
+	memcpy(&returnVal, recvBuf, sizeof(int));
+	return returnVal;
 }

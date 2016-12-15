@@ -31,6 +31,7 @@ private:
 	WSADATA wsaData;                 /* Structure for WinSock setup communication */
 	SOCKET hSocket;
 	SOCKADDR_IN servAddr;
+	SOCKADDR_IN fromAddr;     /* Source address of echo */
 
 	void ErrorHandling(char *message);
 };

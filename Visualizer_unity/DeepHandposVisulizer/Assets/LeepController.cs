@@ -127,62 +127,63 @@ public class LeepController : MonoBehaviour {
         Vector3 t = Cam.WorldToScreenPoint(Base.transform.position);
 
         int target = maxOut(prob);
+        Rect UIPose = new Rect(UnityEngine.Screen.width / 4 * 3, UnityEngine.Screen.height - 400, 400, 400);
 
         if (target == 0)
         {
-            GUI.Label(new Rect(UnityEngine.Screen.width/2, UnityEngine.Screen.height - 400, 400, 400), "ㄱ", gStyle);
+            GUI.Label(UIPose, "ㄱ", gStyle);
         }
         else if(target == 1)
         {
-            GUI.Label(new Rect(UnityEngine.Screen.width/2, UnityEngine.Screen.height - 400, 400, 400), "ㄴ", gStyle);
+            GUI.Label(UIPose, "ㄴ", gStyle);
         }
         else if (target == 2)
         {
-            GUI.Label(new Rect(UnityEngine.Screen.width/2, UnityEngine.Screen.height - 400, 400, 400), "ㄷ", gStyle);
+            GUI.Label(UIPose, "ㄷ", gStyle);
         }
         else if (target == 3)
         {
-            GUI.Label(new Rect(UnityEngine.Screen.width / 2, UnityEngine.Screen.height - 400, 400, 400), "ㄹ", gStyle);
+            GUI.Label(UIPose, "ㄹ", gStyle);
         }
         else if (target == 4)
         {
-            GUI.Label(new Rect(UnityEngine.Screen.width / 2, UnityEngine.Screen.height - 400, 400, 400), "ㅁ", gStyle);
+            GUI.Label(UIPose, "ㅁ", gStyle);
         }
         else if (target == 5)
         {
-            GUI.Label(new Rect(UnityEngine.Screen.width / 2, UnityEngine.Screen.height - 400, 400, 400), "ㅂ", gStyle);
+            GUI.Label(UIPose, "ㅂ", gStyle);
         }
         else if (target == 6)
         {
-            GUI.Label(new Rect(UnityEngine.Screen.width / 2, UnityEngine.Screen.height - 400, 400, 400), "ㅅ", gStyle);
+            GUI.Label(UIPose, "ㅅ", gStyle);
         }
         else if (target == 7)
         {
-            GUI.Label(new Rect(UnityEngine.Screen.width / 2, UnityEngine.Screen.height - 400, 400, 400), "ㅇ", gStyle);
+            GUI.Label(UIPose, "ㅇ", gStyle);
         }
         else if (target == 8)
         {
-            GUI.Label(new Rect(UnityEngine.Screen.width / 2, UnityEngine.Screen.height - 400, 400, 400), "ㅈ", gStyle);
+            GUI.Label(UIPose, "ㅈ", gStyle);
         }
         else if (target == 9)
         {
-            GUI.Label(new Rect(UnityEngine.Screen.width / 2, UnityEngine.Screen.height - 400, 400, 400), "ㅊ", gStyle);
+            GUI.Label(UIPose, "ㅊ", gStyle);
         }
         else if (target == 10)
         {
-            GUI.Label(new Rect(UnityEngine.Screen.width / 2, UnityEngine.Screen.height - 400, 400, 400), "ㅋ", gStyle);
+            GUI.Label(UIPose, "ㅋ", gStyle);
         }
         else if (target == 11)
         {
-            GUI.Label(new Rect(UnityEngine.Screen.width / 2, UnityEngine.Screen.height - 400, 400, 400), "ㅌ", gStyle);
+            GUI.Label(UIPose, "ㅌ", gStyle);
         }
         else if (target == 12)
         {
-            GUI.Label(new Rect(UnityEngine.Screen.width / 2, UnityEngine.Screen.height - 400, 400, 400), "ㅍ", gStyle);
+            GUI.Label(UIPose, "ㅍ", gStyle);
         }
         else if (target == 13)
         {
-            GUI.Label(new Rect(UnityEngine.Screen.width / 2, UnityEngine.Screen.height - 400, 400, 400), "ㅎ", gStyle);
+            GUI.Label(UIPose, "ㅎ", gStyle);
         }
     }
 

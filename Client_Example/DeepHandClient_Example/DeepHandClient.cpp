@@ -79,17 +79,24 @@ int DeepHandClient::SendAndRecognition(cv::Mat src){
 	if (src.rows != 240 || src.cols != 240)
 		cv::resize(src, src, cv::Size(240, 240));
 
-	char buf[173060];
+	char buf[504];
+	char totalBuf[500 * FRAGMENT];
 	ImgPacket sendData;
 	sendData.channel = src.channels();
 	GetIPAddress(sendData.senderIP);
-	memcpy(buf, src.ptr(0), 240 * 240 * src.channels());
+	memcpy(sendData.val, src.ptr(0), 240 * 240 * src.channels());
+	memcpy(totalBuf, &sendData, sizeof(ImgPacket));
 
-	//send data
-	int sendLen;
-	if ((sendLen = sendto(hSocket, buf, sizeof(ImgPacket), 0, (struct sockaddr *)
-		&servAddr, sizeof(servAddr))) != sizeof(ImgPacket))
-		ErrorHandling("sendto() sent a different number of bytes than expected");
+	for (int i = 0; i < FRAGMENT; i++){
+		memcpy(buf, &totalBuf[i * 500], sizeof(char) * 500);
+		memcpy(&buf[500], &i, sizeof(int));
+
+		//send data
+		int sendLen;
+		if ((sendLen = sendto(hSocket, buf, sizeof(char) * 504, 0, (struct sockaddr *)
+			&servAddr, sizeof(servAddr))) != sizeof(char) * 504)
+			ErrorHandling("sendto() sent a different number of bytes than expected");
+	}
 
 	char recvBuf[4];
 	int fromSize;

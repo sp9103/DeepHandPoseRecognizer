@@ -5,6 +5,7 @@
 
 #define SERVER_IP 127.0.0.1
 #define DEFAULT_PORT 2252
+#define FRAGMENT 400
 
 #pragma comment(lib, "ws2_32.lib")
 

@@ -60,7 +60,7 @@ void DeepHandServer::Init(char *ip, int portNum){
 	servAddr.sin_port = htons(_portNum);
 
 	// 家南俊 林家 且寸
-	if (bind(hServSock, (SOCKADDR*)&servAddr, sizeof(servAddr)) == SOCKET_ERROR)
+	if (bind(hServSock, (SOCKADDR*)&servAddr, sizeof(servAddr)) != 0)
 	{
 		ErrorHandling("bind() error");
 	}

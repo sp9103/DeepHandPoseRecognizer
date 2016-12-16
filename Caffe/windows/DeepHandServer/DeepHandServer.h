@@ -27,7 +27,7 @@ public:
 	void sendAnswer(int answer);
 
 private:
-	int _portNum;
+	unsigned short _portNum;
 	char _IP[256];
 	WSADATA wsaData;
 	SOCKET hServSock;

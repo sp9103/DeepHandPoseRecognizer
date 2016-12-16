@@ -47,8 +47,7 @@ void DeepHandClient::Init(char *ip, int portNum){
 
 	if (WSAStartup(MAKEWORD(2, 0), &wsaData) != 0) /* Load Winsock 2.0 DLL */
 	{
-		fprintf(stderr, "WSAStartup() failed");
-		exit(1);
+		ErrorHandling("WSAStartup() failed");
 	}
 	/* Create a best-effort datagram socket using UDP */
 	if ((hSocket = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP)) < 0)
@@ -57,8 +56,9 @@ void DeepHandClient::Init(char *ip, int portNum){
 	/* Construct the server address structure */
 	memset(&servAddr, 0, sizeof(servAddr));    /* Zero out structure */
 	servAddr.sin_family = AF_INET;                 /* Internet address family */
-	servAddr.sin_addr.s_addr = inet_addr(ip);  /* Server IP address */
+	servAddr.sin_addr.s_addr = inet_addr(_IP);  /* Server IP address */
 	servAddr.sin_port = htons(_portNum);     /* Server port */
+
 }
 
 void DeepHandClient::DeInit(){
@@ -83,11 +83,12 @@ int DeepHandClient::SendAndRecognition(cv::Mat src){
 	ImgPacket sendData;
 	sendData.channel = src.channels();
 	GetIPAddress(sendData.senderIP);
-	memcpy(buf, src.ptr(0), sizeof(ImgPacket));
+	memcpy(buf, src.ptr(0), 240 * 240 * src.channels());
 
 	//send data
-	if (sendto(hSocket, buf, sizeof(ImgPacket), 0, (struct sockaddr *)
-		&servAddr, sizeof(servAddr)) != sizeof(ImgPacket))
+	int sendLen;
+	if ((sendLen = sendto(hSocket, buf, sizeof(ImgPacket), 0, (struct sockaddr *)
+		&servAddr, sizeof(servAddr))) != sizeof(ImgPacket))
 		ErrorHandling("sendto() sent a different number of bytes than expected");
 
 	char recvBuf[4];

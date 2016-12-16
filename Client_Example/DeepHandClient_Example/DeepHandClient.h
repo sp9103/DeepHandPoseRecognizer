@@ -4,6 +4,7 @@
 #include <winsock2.h>
 
 #define SERVER_IP 127.0.0.1
+#define DEFAULT_PORT 2252
 
 #pragma comment(lib, "ws2_32.lib")
 

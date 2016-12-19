@@ -45,6 +45,11 @@ void DeepHandClient::Init(char *ip, int portNum){
 		strcpy(_IP, ip);
 	}
 
+	// Load WinSocket 2.2 DLL
+	if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
+	{
+		ErrorHandling("WSAStartup(), error");
+	}
 	// 辑滚 立加阑 困茄 家南 积己
 	hSocket = socket(PF_INET, SOCK_STREAM, 0);
 	if (hSocket == INVALID_SOCKET)

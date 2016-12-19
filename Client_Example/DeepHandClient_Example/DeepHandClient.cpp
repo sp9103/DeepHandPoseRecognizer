@@ -45,19 +45,24 @@ void DeepHandClient::Init(char *ip, int portNum){
 		strcpy(_IP, ip);
 	}
 
-	if (WSAStartup(MAKEWORD(2, 0), &wsaData) != 0) /* Load Winsock 2.0 DLL */
+	// 서버 접속을 위한 소켓 생성
+	hSocket = socket(PF_INET, SOCK_STREAM, 0);
+	if (hSocket == INVALID_SOCKET)
 	{
-		ErrorHandling("WSAStartup() failed");
+		ErrorHandling("hSocketet(), error");
 	}
-	/* Create a best-effort datagram socket using UDP */
-	if ((hSocket = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP)) < 0)
-		ErrorHandling("socket() failed");
 
-	/* Construct the server address structure */
-	memset(&servAddr, 0, sizeof(servAddr));    /* Zero out structure */
-	servAddr.sin_family = AF_INET;                 /* Internet address family */
-	servAddr.sin_addr.s_addr = inet_addr(_IP);  /* Server IP address */
-	servAddr.sin_port = htons(_portNum);     /* Server port */
+	memset(&servAddr, 0, sizeof(servAddr));
+	servAddr.sin_family = AF_INET;
+	servAddr.sin_addr.s_addr = inet_addr(_IP);
+	servAddr.sin_port = htons(_portNum);
+
+	// 서버로 연결 요청
+	if (connect(hSocket, (SOCKADDR*)&servAddr, sizeof(servAddr)) == SOCKET_ERROR)
+	{
+		ErrorHandling("Connect() error");
+	}
+
 
 }
 
@@ -80,33 +85,23 @@ int DeepHandClient::SendAndRecognition(cv::Mat src){
 		cv::resize(src, src, cv::Size(240, 240));
 
 	char buf[504];
-	char totalBuf[500 * FRAGMENT];
+	char totalBuf[200000];
+	char recvBuf[4];
+	int fromSize, recvSize;;
+	int dataLen;
+
 	ImgPacket sendData;
 	sendData.channel = src.channels();
 	GetIPAddress(sendData.senderIP);
 	memcpy(sendData.val, src.ptr(0), 240 * 240 * src.channels());
 	memcpy(totalBuf, &sendData, sizeof(ImgPacket));
 
-	for (int i = 0; i < FRAGMENT; i++){
-		memcpy(buf, &totalBuf[i * 500], sizeof(char) * 500);
-		memcpy(&buf[500], &i, sizeof(int));
+	send(hSocket, totalBuf, sizeof(char) * 200000, 0);
 
-		//send data
-		int sendLen;
-		if ((sendLen = sendto(hSocket, buf, sizeof(char) * 504, 0, (struct sockaddr *)
-			&servAddr, sizeof(servAddr))) != sizeof(char) * 504)
-			ErrorHandling("sendto() sent a different number of bytes than expected");
-	}
-
-	char recvBuf[4];
-	int fromSize;
-	if (recvfrom(hSocket, recvBuf, sizeof(int), 0, (struct sockaddr *) &fromAddr,
-		&fromSize) != sizeof(int))
-		ErrorHandling("recvfrom() failed");
-
-	if (servAddr.sin_addr.s_addr != fromAddr.sin_addr.s_addr)
+	dataLen = recv(hSocket, recvBuf, sizeof(int), 0);
+	if (dataLen == -1)
 	{
-		ErrorHandling("Error: received a packet from unknown source.\n");
+		ErrorHandling("read() error");
 	}
 
 	int returnVal;

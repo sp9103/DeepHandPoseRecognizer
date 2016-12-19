@@ -25,6 +25,7 @@ public:
 	void Init(char *ip, int portNum);
 	void DeInit();
 
+	//return 0~13. if return -1, server busy to service 
 	int SendAndRecognition(cv::Mat src);
 
 private:

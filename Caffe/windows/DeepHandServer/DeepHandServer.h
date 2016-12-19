@@ -2,11 +2,11 @@
 #include <stdlib.h>
 #include <winsock.h>
 #include <opencv2\opencv.hpp>
+#include <list>
 
 #pragma comment(lib, "ws2_32.lib")
 
 #define DEFAULT_PORT 2252
-
 typedef struct ImgPacket_{
 	int channel;
 	unsigned char val[240 * 240 * 3];
@@ -31,6 +31,7 @@ private:
 	char _IP[256];
 	WSADATA wsaData;
 	SOCKET hServSock;
+	SOCKET hClntSock;
 	SOCKADDR_IN servAddr;
 	SOCKADDR_IN clntAddr;
 	int szClntAddr;

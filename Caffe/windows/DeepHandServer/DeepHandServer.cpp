@@ -45,14 +45,18 @@ void DeepHandServer::Init(char *ip, int portNum){
 		strcpy(_IP, ip);
 	}
 
-	// Load WinSocket 2.2 DLL
+	// Load Winsock 2.2 DLL
 	if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
 	{
-		ErrorHandling("WSAStartup(), error");
+		ErrorHandling("WSAStartup() error!");
 	}
 
-	if ((hServSock = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP)) < 0)
-		ErrorHandling("socket() failed");
+	// 서버 소켓 생성
+	hServSock = socket(PF_INET, SOCK_STREAM, 0);
+	if (hServSock == INVALID_SOCKET)
+	{
+		ErrorHandling("socket() error");
+	}
 
 	memset(&servAddr, 0, sizeof(servAddr));
 	servAddr.sin_family = AF_INET;
@@ -60,9 +64,23 @@ void DeepHandServer::Init(char *ip, int portNum){
 	servAddr.sin_port = htons(_portNum);
 
 	// 소켓에 주소 할당
-	if (bind(hServSock, (SOCKADDR*)&servAddr, sizeof(servAddr)) != 0)
+	if (bind(hServSock, (SOCKADDR*)&servAddr, sizeof(servAddr)) == SOCKET_ERROR)
 	{
 		ErrorHandling("bind() error");
+	}
+
+	// 연결 요청 대기 상태
+	if (listen(hServSock, 5) == SOCKET_ERROR)
+	{
+		ErrorHandling("listen() error");
+	}
+
+	// 연결 요청 수락 - block until client access
+	szClntAddr = sizeof(clntAddr);
+	hClntSock = accept(hServSock, (SOCKADDR*)&clntAddr, &szClntAddr);
+	if (hClntSock == INVALID_SOCKET)
+	{
+		ErrorHandling("accept() error");
 	}
 
 	szClntAddr = sizeof(clntAddr);
@@ -80,13 +98,18 @@ void DeepHandServer::ErrorHandling(char *message)
 }
 
 cv::Mat DeepHandServer::recvFromClient(){
-	char buf[173060];
-	/* Block until receive message from a client */
-	if ((recvMsgSize = recvfrom(hServSock, buf, sizeof(recvData), 0,
-		(struct sockaddr *) &clntAddr, &szClntAddr)) < 0)
-		ErrorHandling("recvfrom() failed");
 
-	memcpy(buf, &recvData, sizeof(recvData));
+	char totalBuf[200000];
+	char buf[504];
+
+	// 데이터 수신 
+	int dataLen = recv(hClntSock, totalBuf, sizeof(char) * 200000, 0);
+	if (dataLen == -1)
+	{
+		ErrorHandling("read() error");
+	}
+
+	memcpy(&recvData, totalBuf, sizeof(ImgPacket));
 
 	//이미지 만들기
 	cv::Mat retMat;
@@ -105,6 +128,6 @@ cv::Mat DeepHandServer::recvFromClient(){
 void DeepHandServer::sendAnswer(int answer){
 	char data[4];
 	memcpy(data, &answer, sizeof(int));
-	if (sendto(hServSock, data, sizeof(int), 0, (struct sockaddr *) &szClntAddr, sizeof(szClntAddr)) != recvMsgSize)
-		ErrorHandling("sendto() sent a different number of bytes than expected");
+	// 데이터 전송
+	send(hClntSock, data, sizeof(char) * 4, 0);
 }

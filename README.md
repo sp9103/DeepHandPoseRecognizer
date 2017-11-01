@@ -16,3 +16,5 @@ Path : Caffe\windows\caffe\\.
 ##snapshot
 * *.caffemodel : weight file. if u want using some another project or finetuning, using this file.<br>
 * *.solverstate : weight file + training state. if u want training more iteration, using this file.<br>
+
+https://www.youtube.com/watch?v=udFVnKxZhFs
